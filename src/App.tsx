@@ -10,13 +10,15 @@ import {
 import { ROUTES } from './shared/config';
 import {
   AuthContextProvider,
-  UserContextProvider
+  UserContextProvider,
+  MemoryContextProvider
 } from './contexts';
 import {
   AuthRoute,
   UnAuthRoute,
   Login,
-  Logout
+  Logout,
+  Slides
 } from './components';
 
 function App() {
@@ -33,11 +35,9 @@ function App() {
                 </AuthRoute>
 
                 <AuthRoute path={ ROUTES.ROOT }>
-                  <div className="App">
-                    <header className="App-header">
-                      <img src={logo} className="App-logo" alt="logo" />
-                    </header>
-                  </div>
+                  <MemoryContextProvider>
+                   <Slides />
+                  </MemoryContextProvider>
                 </AuthRoute>
             </Switch>
           </Router>

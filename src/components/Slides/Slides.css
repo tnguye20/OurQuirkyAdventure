@@ -1,0 +1,38 @@
+video {
+  object-fit: contain !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  top: 0;
+}
+
+img {
+  object-fit: contain !important;
+  text-align: center;
+  margin: auto;
+  width: 100vw !important;
+  height: 100vh !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.slideContainer {
+  position: absolute;
+  width: 100vw !important;
+  height: 100vh !important;
+  top: 0;
+  overflow: hidden; 
+}
+
+.slideCaption {
+  display: block;
+  background: rgba(0,0,0, 0.5);
+  bottom: 6%;
+  font-size: 18px;
+  margin: auto;
+  z-index: 999;
+  width: 50%;
+  padding: 20px;
+  text-align: center;
+}
