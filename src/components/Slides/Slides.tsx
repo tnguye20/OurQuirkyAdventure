@@ -73,7 +73,7 @@ export const Slides: React.FC = () => {
     React.useEffect(() => {
         if (memories.length > 0) {
             loadElement(0);
-            loadElement(1);
+            if (memories.length > 0) loadElement(1);
         }
     }, [memories]);
 
