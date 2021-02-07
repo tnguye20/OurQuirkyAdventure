@@ -8,7 +8,7 @@ const useUser = () => {
     const { authUser } = useAuthValue();
 
     useEffect(() => {
-        const { userRef }  = new UserDao(authUser.uid!);
+        const { userRef }  = new UserDao(authUser!.uid!);
         if (userRef) {
             const unsubscribe = userRef.onSnapshot((u) => {
                 const data = {

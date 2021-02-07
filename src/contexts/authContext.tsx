@@ -1,17 +1,27 @@
 import * as React from 'react';
+import { Dispatch } from 'react';
 import { useAuth } from '../hooks';
 import { AuthToken } from '../interfaces';
 
 const { createContext, useContext } = React;
 
-export const AuthContext = createContext<Record<string, AuthToken>>({});
+interface AuthContextValue {
+    authUser: AuthToken | undefined,
+    setAuthUser: Dispatch<React.SetStateAction<AuthToken>> | undefined
+}
+
+export const AuthContext = createContext<AuthContextValue>({
+    authUser: undefined,
+    setAuthUser: undefined
+});
  
 export const AuthContextProvider: React.FC = ({ children }) => {
-    const { authUser } = useAuth();
+    const { authUser, setAuthUser } = useAuth();
 
     return (
         <AuthContext.Provider value={{
-            authUser
+            authUser,
+            setAuthUser
         }}>
             { children }
         </AuthContext.Provider>

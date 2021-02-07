@@ -1,9 +1,11 @@
 import { AuthRoute } from './AuthRoute';
 import { UnAuthRoute } from './UnAuthRoute';
-import { Slides } from './Slides';
+import { 
+    Login
+} from './Authentication';
 
 export {
     AuthRoute,
     UnAuthRoute,
-    Slides
+    Login
 };

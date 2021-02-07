@@ -24,7 +24,8 @@ const useAuth = () => {
     });
     
     return {
-        authUser
+        authUser,
+        setAuthUser
     };
 };
 

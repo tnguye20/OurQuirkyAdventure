@@ -15,23 +15,27 @@ import {
 import {
   AuthRoute,
   UnAuthRoute,
+  Login
 } from './components';
 
 function App() {
   return (
     <AuthContextProvider>
-      <Router>
-        <Switch>
-            <AuthRoute path={ ROUTES.ROOT }>
-              <div className="App">
-                <header className="App-header">
-                  <img src={logo} className="App-logo" alt="logo" />
-                </header>
-              </div>
-            </AuthRoute>
-        </Switch>
-      </Router>
+          <Router>
+            <Switch>
+                <AuthRoute path={ ROUTES.LOGIN }>
+                  <Login />
+                </AuthRoute>
 
+                <AuthRoute path={ ROUTES.ROOT }>
+                  <div className="App">
+                    <header className="App-header">
+                      <img src={logo} className="App-logo" alt="logo" />
+                    </header>
+                  </div>
+                </AuthRoute>
+            </Switch>
+          </Router>
     </AuthContextProvider>
   );
 }
