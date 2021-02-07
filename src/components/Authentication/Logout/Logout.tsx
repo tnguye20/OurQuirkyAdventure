@@ -34,8 +34,8 @@ export const Logout = () => {
     <div className="Logout">
       <div className="Logout-card ">
         {/* <GlassesIcon size='100px' /> */}
-        <Typography variant="h4" color='textPrimary'>Our Quirky Adventure 💕</Typography>
-        <Typography variant="h5" color='textPrimary'>Signing Out...</Typography>
+        <Typography variant="h4" color='textPrimary'>Our Quirky Adventure</Typography>
+        <Typography variant="h5" color='textPrimary'>Logging Out...</Typography>
         <CircularProgress style={{margin: '10px'}}/>
       </div>
 

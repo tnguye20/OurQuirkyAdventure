@@ -1,5 +1,6 @@
 import { AuthRoute } from './AuthRoute';
 import { UnAuthRoute } from './UnAuthRoute';
+import { Slides } from './Slides';
 import { 
     Login,
     Logout
@@ -9,5 +10,6 @@ export {
     AuthRoute,
     UnAuthRoute,
     Login,
-    Logout
+    Logout,
+    Slides
 };

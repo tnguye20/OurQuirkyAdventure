@@ -21,6 +21,8 @@ const useAuth = () => {
                 setAuthUser(authUser);
            }
         });
+
+        return () => unsubscribed();
     });
     
     return {

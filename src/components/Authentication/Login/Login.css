@@ -28,5 +28,11 @@
   max-height: 525px;
   justify-content: space-evenly;
   align-items: center;
+}
 
+@media (max-width: 1281px) {
+  .Login-card {
+    width: 50%;
+    height: 75%;
+  }
 }

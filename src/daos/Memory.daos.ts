@@ -15,7 +15,7 @@ export default class MemoryDao {
     this.query = this.ref.where('user', '==', userID);
   }
 
-  setOrderBy(term: string, direction: 'asc' | 'desc' = 'desc') {
+  setOrderBy(term: string, direction: 'asc' | 'desc' = 'asc') {
     this.query = this.query
       ? this.query.orderBy(term, direction)
       : this.ref.orderBy(term, direction);

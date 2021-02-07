@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Memory, Category } from '../../interfaces';
 import Carousel from 'react-bootstrap/Carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 import './Slides.css';
 
@@ -15,21 +16,30 @@ export const Slides: React.FC = () => {
     const { memories } = useMemoryValue();
 
     React.useEffect(() => {
-        let els = Array.from(document.querySelectorAll('.carousel-item > img,video'));
-        elements.current = els;
-        console.log(elements.current);
-    });
+        if (memories.length > 0) {
+            let els = Array.from(document.querySelectorAll('.carousel-item > img,video'));
+            console.log('els', els);
+            if (els.length !== elements.current.length ) {
+                elements.current = els;
+            }
+        }
+    }, [memories]);
 
     const handleOnSlide = (eventKey: number, direction: "left" | "right") => {
         if (elements.current.length > 0) {
             const element = elements.current[eventKey];
             if (element.nodeName === 'VIDEO') {
                 const video: HTMLVideoElement = element as HTMLVideoElement;
-                video.pause();
-                video.currentTime = 0;
-                video.play();
-                const duration = (video.duration) * 1000;
-                setInterval(duration);
+                try {
+                    video.pause();
+                    video.currentTime = 0;
+                    video.play();
+                    const duration = (video.duration) * 1000;
+                    setInterval(duration);
+                }
+                catch (error) {
+                    console.log(error);
+                }
             }
             else {
                 setInterval(5000);
@@ -52,6 +62,7 @@ export const Slides: React.FC = () => {
                             return (
                                 <Carousel.Item key={index}>
                                     <video
+                                        // controls
                                         src={memory.url}
                                         muted
                                         autoPlay
@@ -67,9 +78,9 @@ export const Slides: React.FC = () => {
                         return (
                             <Carousel.Item key={index}>
                                 <img src={memory.url} />
-                                    <Carousel.Caption>
-                                        <p className='slideCaption'>{memory.title}</p>
-                                    </Carousel.Caption>
+                                <Carousel.Caption>
+                                    <p className='slideCaption'>{memory.title}</p>
+                                </Carousel.Caption>
                             </Carousel.Item> 
                         );
                     })

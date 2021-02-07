@@ -36,7 +36,7 @@ function App() {
 
                 <AuthRoute path={ ROUTES.ROOT }>
                   <MemoryContextProvider>
-                   <Slides />
+                    <Slides />
                   </MemoryContextProvider>
                 </AuthRoute>
             </Switch>

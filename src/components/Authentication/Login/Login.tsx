@@ -17,6 +17,7 @@ import { auth } from '../../../lib';
 import { useAuthValue } from '../../../contexts';
 
 import './Login.css';
+import { AuthToken } from '../../../interfaces';
 const useStyles = makeStyles((theme) => ({
   button: {
     margin: '10px',
@@ -38,10 +39,9 @@ export const Login = () => {
       const idToken = await user.getIdToken();
       localStorage.setItem("idToken", idToken);
       localStorage.setItem("uid", user.uid);
-      setAuthUser!({
-        idToken,
-        uid: user.uid
-      });
+      const authToken = new AuthToken(user.uid, idToken);
+
+      setAuthUser!(authToken);
       history.push(ROUTES.ROOT);
     }
 
@@ -51,7 +51,7 @@ export const Login = () => {
     <div className="Login">
       <div className="Login-card ">
         {/* <GlassesIcon size='100px' /> */}
-        <Typography variant="h4" color='textPrimary'>Our Quirky Adventure 💕</Typography>
+        <Typography variant="h4" color='textPrimary'>Our Quirky Adventure</Typography>
         <TextField 
           className='Login-field'
           onChange={(e) => {setEmail(e.target.value)}}

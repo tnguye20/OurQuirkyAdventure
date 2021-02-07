@@ -36,3 +36,16 @@ img {
   padding: 20px;
   text-align: center;
 }
+
+.carousel-control-prev, .carousel-control-next {
+  visibility: hidden;
+}
+
+@media (max-width: 500px) {
+  .slideCaption {
+    bottom: 2%;
+    font-size: 18px;
+    width: 80vw;
+    padding: 10px;
+  }
+}
