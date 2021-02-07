@@ -15,7 +15,8 @@ import {
 import {
   AuthRoute,
   UnAuthRoute,
-  Login
+  Login,
+  Logout
 } from './components';
 
 function App() {
@@ -23,8 +24,12 @@ function App() {
     <AuthContextProvider>
           <Router>
             <Switch>
-                <AuthRoute path={ ROUTES.LOGIN }>
+                <UnAuthRoute path={ ROUTES.LOGIN }>
                   <Login />
+                </UnAuthRoute>
+
+                <AuthRoute path={ ROUTES.LOGOUT }>
+                  <Logout />
                 </AuthRoute>
 
                 <AuthRoute path={ ROUTES.ROOT }>

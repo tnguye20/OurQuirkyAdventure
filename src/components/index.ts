@@ -1,11 +1,13 @@
 import { AuthRoute } from './AuthRoute';
 import { UnAuthRoute } from './UnAuthRoute';
 import { 
-    Login
+    Login,
+    Logout
 } from './Authentication';
 
 export {
     AuthRoute,
     UnAuthRoute,
-    Login
+    Login,
+    Logout
 };

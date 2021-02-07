@@ -1,7 +1,7 @@
 const ROUTES = {
  LOGIN: '/login',
  SIGNUP: '/signup',
- SIGNOUT: '/signout',
+ LOGOUT: '/logout',
  APP: '/app',
  ROOT: '/',
  EDIT_MEMORY: '/edit',

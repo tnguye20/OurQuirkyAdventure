@@ -6,12 +6,12 @@ import { AuthToken } from '../interfaces';
 const { createContext, useContext } = React;
 
 interface AuthContextValue {
-    authUser: AuthToken | undefined,
+    authUser: AuthToken,
     setAuthUser: Dispatch<React.SetStateAction<AuthToken>> | undefined
 }
 
 export const AuthContext = createContext<AuthContextValue>({
-    authUser: undefined,
+    authUser: new AuthToken(null, null),
     setAuthUser: undefined
 });
  
