@@ -11,39 +11,101 @@ import {
 } from '../../contexts';
 
 export const Slides: React.FC = () => {
-    const elements = React.useRef<Element[]>([]);
+    // const elements = React.useRef<Element[]>([]);
     const [interval, setInterval] = React.useState<number>(5000);
     const { memories } = useMemoryValue();
 
+    const handleInterval = (i: number) => {
+        if (i !== interval) {
+            setInterval(i);
+        }
+    };
+
+    const loadElement = (index: number, withInterval: boolean = false) => {
+        const el = document.querySelector(`#item_${index}`) as HTMLElement;
+        if (el) {
+            const { src, type } = el.dataset;
+            if (src && type) {
+                if (type === 'video') {
+                    const video = document.createElement('video');
+                    video.setAttribute('src', src);
+                    video.dataset.type = type;
+                    video.autoplay = true;
+                    video.preload = "metadata";
+                    video.loop = false;
+                    video.muted = true;
+                    video.classList.add(`loaded_slide_${index}`);
+                    video.setAttribute("muted", "");
+                    video.setAttribute("playsinline", '');
+                    video.onloadedmetadata = () => {
+                        const duration = (video.duration) * 1000;
+                        try {
+                            video.pause();
+                            video.currentTime = 0;
+                            video.play();
+                            const duration = (video.duration) * 1000;
+
+                            if (withInterval) handleInterval(duration);
+                        }
+                        catch (error) {
+                            console.log(error);
+                            if (withInterval) handleInterval(5000);
+                        }
+                    }
+
+                    const container = document.querySelector(`#container_${index}`)!;
+                    container.appendChild(video);
+                }
+                else {
+                    const image = document.createElement('img');
+                    image.setAttribute('src', src);
+                    image.dataset.type = type;
+                    image.classList.add(`loaded_slide_${index}`);
+                    const container = document.querySelector(`#container_${index}`)!;
+                    container.appendChild(image);
+
+                    if (withInterval) handleInterval(5000);
+                }
+            }
+        }
+    }
+
     React.useEffect(() => {
         if (memories.length > 0) {
-            let els = Array.from(document.querySelectorAll('.carousel-item > img,video'));
-            console.log('els', els);
-            if (els.length !== elements.current.length ) {
-                elements.current = els;
-            }
+            loadElement(0);
+            loadElement(1);
         }
     }, [memories]);
 
     const handleOnSlide = (eventKey: number, direction: "left" | "right") => {
-        if (elements.current.length > 0) {
-            const element = elements.current[eventKey];
-            if (element.nodeName === 'VIDEO') {
-                const video: HTMLVideoElement = element as HTMLVideoElement;
+        const el = document.querySelector(`.loaded_slide_${eventKey}`) as HTMLElement;
+        if (el) {
+            const { type } = el.dataset;
+            if (type === 'video') {
                 try {
+                    const video = el as HTMLVideoElement;
                     video.pause();
                     video.currentTime = 0;
                     video.play();
                     const duration = (video.duration) * 1000;
-                    setInterval(duration);
+                    handleInterval(duration);
                 }
                 catch (error) {
                     console.log(error);
                 }
             }
             else {
-                setInterval(5000);
+                handleInterval(5000);
             }
+
+            const nextIndex: number = eventKey + 1;
+            const nextEl = document.querySelector(`.loaded_slide_${nextIndex}`) as HTMLElement;
+            if (!nextEl && nextIndex < memories.length) {
+                loadElement(nextIndex);
+            }
+        }
+        else {
+            loadElement(eventKey);
         }
     }
 
@@ -54,30 +116,14 @@ export const Slides: React.FC = () => {
                 interval={interval}
                 onSlide={handleOnSlide}
                 fade={true}
+                pause={false}
             >
                 {
                     memories
                     .map((memory: Memory, index) => {
-                        if (memory.category === 'video') {
-                            return (
-                                <Carousel.Item key={index}>
-                                    <video
-                                        // controls
-                                        src={memory.url}
-                                        muted
-                                        autoPlay
-                                        playsInline
-                                        preload="metadata"
-                                    />
-                                    <Carousel.Caption>
-                                        <p className='slideCaption'>{memory.title}</p>
-                                    </Carousel.Caption>
-                                </Carousel.Item> 
-                            );
-                        }
                         return (
-                            <Carousel.Item key={index}>
-                                <img src={memory.url} />
+                            <Carousel.Item key={index} id={`container_${index}`} className='slide_container'>
+                                <div className='slide_item' id={`item_${index}`} data-src={memory.url} data-type={memory.category}></div>
                                 <Carousel.Caption>
                                     <p className='slideCaption'>{memory.title}</p>
                                 </Carousel.Caption>

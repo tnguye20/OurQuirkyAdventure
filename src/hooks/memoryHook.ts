@@ -22,8 +22,8 @@ const useMemory = () => {
         } as Memory;
       });
       console.log(data);
-      // setMemories(data);
-      setMemories(data.filter(m => m.category === 'video'));
+      setMemories(data);
+      // setMemories(data.filter(m => m.category === 'video'));
     });
 
     return () => unsubscribe();
