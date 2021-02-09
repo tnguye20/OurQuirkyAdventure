@@ -5,11 +5,13 @@ import {
     Login,
     Logout
 } from './Authentication';
+import { Upload } from './Upload';
 
 export {
     AuthRoute,
     UnAuthRoute,
     Login,
     Logout,
-    Slides
+    Slides,
+    Upload
 };

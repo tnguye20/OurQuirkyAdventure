@@ -18,7 +18,8 @@ import {
   UnAuthRoute,
   Login,
   Logout,
-  Slides
+  Slides,
+  Upload
 } from './components';
 
 function App() {
@@ -29,6 +30,12 @@ function App() {
                 <UnAuthRoute path={ ROUTES.LOGIN }>
                   <Login />
                 </UnAuthRoute>
+
+                <AuthRoute path={ ROUTES.UPLOAD }>
+                  <UserContextProvider>
+                    <Upload />
+                  </UserContextProvider>
+                </AuthRoute>
 
                 <AuthRoute path={ ROUTES.LOGOUT }>
                   <Logout />

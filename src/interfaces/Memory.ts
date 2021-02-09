@@ -6,7 +6,7 @@ export enum Category {
     video = 'video'
 };
 
-enum Extension {
+export enum Extension {
     JPEG = 'jpeg',
     JPG = 'jpg',
     PNG = 'png',
@@ -14,7 +14,7 @@ enum Extension {
     MP4 = 'mp4'
 };
 
-enum Minetype {
+export enum Mimetype {
   JPEG = 'image/jpeg',
   JPG = 'image/jpg',
   PNG = 'image/png',
@@ -24,26 +24,26 @@ enum Minetype {
 }
 
 export interface IMemory {
-    city?: string,
-    country?: string,
-    countryCode?: string,
-    formattedAddress?: string,
-    neighnbourhood?: string,
-    streetName?: string,
-    streetNumber?: string,
-    zipcode?: string,
-    provider?: string,
-    state?: string,
-    latitude?: string,
-    longtitude?: string,
-    id?: string | undefined,
+    city?: string | null,
+    country?: string | null,
+    countryCode?: string | null,
+    formattedAddress?: string | null,
+    neighnbourhood?: string | null,
+    streetName?: string | null,
+    streetNumber?: string | null,
+    zipcode?: string | null,
+    provider?: string | null,
+    state?: string | null,
+    latitude?: string | null,
+    longtitude?: string | null,
+    id?: string | null,
     name: string,
     size: number,
     user: IUser['id'],
     title: string,
     category: keyof typeof Category,
     extension: keyof typeof Extension,
-    mimetype: keyof typeof Minetype,
+    mimetype: keyof typeof Mimetype,
     takenDate: firebase.firestore.Timestamp,
     uploadedDate: firebase.firestore.Timestamp,
     tags?: Array<string>,
@@ -51,26 +51,26 @@ export interface IMemory {
 }
 
 export class Memory implements IMemory {
-    city?: string | undefined;
-    country?: string | undefined;
-    countryCode?: string | undefined;
-    formattedAddress?: string | undefined;
-    neighnbourhood?: string | undefined;
-    streetName?: string | undefined;
-    streetNumber?: string | undefined;
-    zipcode?: string | undefined;
-    provider?: string | undefined;
-    state?: string | undefined;
-    latitude?: string | undefined;
-    longtitude?: string | undefined;
-    id?: string | undefined;
+    city: string | null = null;
+    country: string | null = null;
+    countryCode: string | null = null;
+    formattedAddress: string | null = null;
+    neighnbourhood: string | null = null;
+    streetName: string | null = null;
+    streetNumber: string | null = null;
+    zipcode: string | null = null;
+    provider: string | null = null;
+    state: string | null = null;
+    latitude: string | null = null;
+    longtitude: string | null = null;
+    id: string | null = null;
     name: string;
     title: string = 'One of my best memories with you';
     size: number;
     user: string;
     category: keyof typeof Category;
     extension: keyof typeof Extension;
-    mimetype: keyof typeof Minetype;
+    mimetype: keyof typeof Mimetype;
     takenDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
     uploadedDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
     tags: string[] = [];
@@ -82,7 +82,7 @@ export class Memory implements IMemory {
         user: string,
         category: keyof typeof Category,
         extension: keyof typeof Extension,
-        mimetype: keyof typeof Minetype,
+        mimetype: keyof typeof Mimetype,
         title?: string,
         tags?: string[],
         id?: string,

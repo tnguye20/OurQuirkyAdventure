@@ -1,11 +1,11 @@
-video {
+.slideContainer video {
   object-fit: contain !important;
   width: 100vw !important;
   height: 100vh !important;
   top: 0;
 }
 
-img {
+.slideContainer img {
   object-fit: contain !important;
   text-align: center;
   margin: auto;

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Memory, Category } from '../../interfaces';
 import Carousel from 'react-bootstrap/Carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 import './Slides.css';
 
@@ -26,7 +25,7 @@ export const Slides: React.FC = () => {
         if (el) {
             const { src, type } = el.dataset;
             if (src && type) {
-                if (type === 'video') {
+                if (type === Category.video) {
                     const video = document.createElement('video');
                     video.setAttribute('src', src);
                     video.dataset.type = type;
@@ -81,7 +80,7 @@ export const Slides: React.FC = () => {
         const el = document.querySelector(`.loaded_slide_${eventKey}`) as HTMLElement;
         if (el) {
             const { type } = el.dataset;
-            if (type === 'video') {
+            if (type === Category.video) {
                 try {
                     const video = el as HTMLVideoElement;
                     video.pause();

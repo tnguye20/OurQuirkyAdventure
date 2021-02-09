@@ -20,7 +20,7 @@ const useUser = () => {
 
             return () => unsubscribe();
         }
-    });
+    }, []);
 
     return {
         user

@@ -31,4 +31,8 @@ export default class MemoryDao {
       }
       throw new Error('Invalid Memory');
   }
+
+  async addMemory(memory: Memory) {
+    return await this.ref.add(memory);
+  }
 }

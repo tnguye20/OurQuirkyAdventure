@@ -1,0 +1,12 @@
+.circle {
+    fill: white; position: absolute; z-index: 1; ; width:24px; height:24px
+}
+.checkmark {
+    fill: lightseagreen; position: absolute; width:24px; height:24px; z-index: 2;
+}
+.checkmarkContainer {
+    left: 4px;
+    top: 4px;
+    position: absolute;
+    z-index: 1;
+}
