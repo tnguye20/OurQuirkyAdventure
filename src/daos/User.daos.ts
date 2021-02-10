@@ -20,4 +20,16 @@ export default class UserDao {
         }
         throw new Error('Invalid User');
     }
+
+    async updateUser(field: string, data: any) {
+        this.userRef!.update(data);
+    }
+    
+    async addToCollections(newTags: Array<string>): Promise<User> {
+        const user = await this.getUser();
+        const updatedCollections = [...user.collections, ...newTags];
+        await this.updateUser('collections', updatedCollections); 
+        user.collections = updatedCollections;
+        return user;
+    }
 }

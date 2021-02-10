@@ -21,14 +21,19 @@ export const Upload: React.FC = () => {
   const files = React.useRef<FileList>();
   const { authUser } = useAuthValue();
   const { uid } = authUser;
+
+  React.useEffect(() => () => {
+    if (filesInfo) {
+      Object.values(filesInfo).forEach((info) => URL.revokeObjectURL(info.src));
+    }
+  }, [files, filesInfo]);
   
   const handleCloseModal = () => {
     setShowEditModal(false);
 
     Array.from(document.querySelectorAll('div.checked')).forEach((node) => node.classList.remove('checked'));
-    Object.values(filesInfo!).forEach((value) => value.checked = false);
+    Object.values(filesInfo!).forEach((info) => info.checked = false);
     setCheckedFiles({});
-    console.log(filesInfo);
   }
   
   const reset = () => {
@@ -53,7 +58,7 @@ export const Upload: React.FC = () => {
           src = await getVideoSource(file);
         }
         else {
-          src = await getImageSrc(file);
+          src = await getVideoSource(file);
         }
         info[name] = {
           src,
@@ -78,7 +83,6 @@ export const Upload: React.FC = () => {
           return reduced;
         }, {} as Record<string, FileInfo>);
       
-      console.log('checked', checkedItems)
       if (checkedFiles) {
         setCheckedFiles(checkedItems);
         setShowEditModal(true);

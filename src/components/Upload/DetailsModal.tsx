@@ -29,14 +29,15 @@ export const DetailsModal: React.FC<any> = ({
   React.useEffect(() => {
     const checkedItems = Object.values(checkedFiles) as Array<FileInfo>;
     if (checkedItems.length > 0) {
-      const reduced = checkedItems.reduce((reduced: FileInfo, info: FileInfo) => {
-          if (reduced.title !== info.title) {
-            reduced.title = '';
+      const reduced = checkedItems.reduce((prev: FileInfo, curr: FileInfo) => {
+          const cloned = { ...prev };
+          if (cloned.title !== curr.title) {
+            cloned.title = '';
           }
-          if (!ArrayIsEqual(reduced.tags, info.tags)) {
-            reduced.tags = [];
-         }
-          return reduced;
+          if (!ArrayIsEqual(cloned.tags, curr.tags)) {
+            cloned.tags = [];
+          }
+          return cloned;
         });
 
       setTitle(reduced.title);
