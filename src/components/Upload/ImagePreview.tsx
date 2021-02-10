@@ -18,12 +18,9 @@ export const ImagePreview: React.FC<any> = (props) => {
     event.stopPropagation();
     event.currentTarget.classList.toggle('checked');
     const filename = event.currentTarget.dataset.filename;
-    // const tmp = { ...filesInfo };
     if (filename) {
-      // tmp[filename].checked = !filesInfo[filename].checked;
       filesInfo[filename].checked = !filesInfo[filename].checked;
     }
-    // setFilesInfo(tmp);
   }
 
   return (
@@ -31,12 +28,12 @@ export const ImagePreview: React.FC<any> = (props) => {
         <Grid container spacing={1} direction="row">
           {
             Object.keys(filesInfo).map( (filename, index) => {
-              const { src } = filesInfo[filename];
+              const { src, edited } = filesInfo[filename];
               return (
-                <Grid key={index} item md={4} sm={12} xs={12} >
+                <Grid key={index} item md={4} sm={12} xs={12} className='fileHolder'>
                   <Card className='fileContainer' onClick={handleOnClick} data-filename={filename}>
                     <CheckMark />
-                    <CardActionArea>
+                    <CardActionArea className={edited ? 'edited' : ''}>
                       <CardMedia
                         component='img'
                         src={src}

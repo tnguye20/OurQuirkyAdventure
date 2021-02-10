@@ -7,6 +7,7 @@ export interface FileInfo {
   src: string,
   category: keyof typeof Category,
   checked: boolean,
+  edited: boolean,
   tags: Array<string>
 }
 

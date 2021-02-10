@@ -22,14 +22,16 @@ export default class UserDao {
     }
 
     async updateUser(field: string, data: any) {
-        this.userRef!.update(data);
+        this.userRef!.update({
+            [field]: data
+        });
     }
     
     async addToCollections(newTags: Array<string>): Promise<User> {
         const user = await this.getUser();
-        const updatedCollections = [...user.collections, ...newTags];
-        await this.updateUser('collections', updatedCollections); 
-        user.collections = updatedCollections;
+        const totalTags = Array.from(new Set([...user!.collections, ...newTags]));
+        await this.updateUser('collections', totalTags); 
+        user.collections = totalTags;
         return user;
     }
 }

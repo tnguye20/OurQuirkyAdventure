@@ -1,5 +1,5 @@
 .circle {
-    fill: white; position: absolute; z-index: 1; ; width:24px; height:24px
+    fill: black; position: absolute; z-index: 1; ; width:24px; height:24px
 }
 .checkmark {
     fill: lightseagreen; position: absolute; width:24px; height:24px; z-index: 2;

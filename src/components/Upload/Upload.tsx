@@ -1,92 +1,135 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
+import {useDropzone} from 'react-dropzone';
+import { Container } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import { ImagePreview } from './ImagePreview';
+import { DetailsModal } from './DetailsModal';
+
+import './Upload.css';
 
 import { storage } from '../../lib';
 import { useAuthValue } from '../../contexts';
 import { Category, Extension, Mimetype, Memory } from '../../interfaces/Memory';
 import { FileInfo } from '../../interfaces';
 import { MemoryDao } from '../../daos';
-import { 
-  getImageSrc, getVideoSource
-} from '../../utils';
-import { ImagePreview } from './ImagePreview';
-import { DetailsModal } from './DetailsModal';
+import { ROUTES } from '../../shared/config';
 
 export const Upload: React.FC = () => {
   const [filesInfo, setFilesInfo] = React.useState<Record<string, FileInfo>>();
   const [isUploading, setIsUploading] = React.useState<boolean>(false);
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
-  const [checkedFiles, setCheckedFiles] = React.useState<Record<string, FileInfo>>();
-
-  const files = React.useRef<FileList>();
+  const files = React.useRef<File[]>();
   const { authUser } = useAuthValue();
   const { uid } = authUser;
+  const history = useHistory();
+
+  const {
+    getRootProps,
+    getInputProps,
+    acceptedFiles,
+    fileRejections
+  } = useDropzone({
+    accept: 'image/*, video/mp4, video/quicktime',
+    maxFiles: 20,
+    maxSize: 30000000,
+    disabled: isUploading,
+    onDropAccepted: (acceptedFiles) => {
+      setFilesInfo({});
+      files.current = acceptedFiles;
+      const info: Record<string, FileInfo> = {};
+      files.current.forEach((file) => {
+        const { type, name } = file;
+        const mimetype = type as keyof typeof Mimetype;
+        const mimetypeSplit = mimetype.split("/");
+        const category = mimetypeSplit[0] as keyof typeof Category;
+        let src = URL.createObjectURL(file);
+        info[name] = {
+          src,
+          title: '',
+          category,
+          checked: false,
+          edited: false,
+          tags: []
+        }
+      })
+      setFilesInfo(info);
+    }
+  });
+  
+  const fileRejectionItems = fileRejections.map(({ file, errors }) => (
+    <li key={file.name}>
+      {file.name} - {file.size} bytes
+      <ul>
+        {errors.map(e => (
+          <li key={e.code}>{e.message}</li>
+        ))}
+      </ul>
+    </li>
+  ));
 
   React.useEffect(() => () => {
     if (filesInfo) {
       Object.values(filesInfo).forEach((info) => URL.revokeObjectURL(info.src));
     }
   }, [files, filesInfo]);
+
+  const removeCheckmarks = () => {
+    const checkedEls = document.querySelectorAll('div.checked');
+    if (checkedEls) {
+      Array.from(checkedEls).forEach((node) => node.classList.remove('checked'));
+    }
+  }
   
   const handleCloseModal = () => {
     setShowEditModal(false);
-
-    Array.from(document.querySelectorAll('div.checked')).forEach((node) => node.classList.remove('checked'));
-    Object.values(filesInfo!).forEach((info) => info.checked = false);
-    setCheckedFiles({});
+    removeCheckmarks();
+    const checkedEls = document.querySelectorAll('div.checked');
+    if (checkedEls) {
+      Array.from(checkedEls).forEach((node) => node.classList.remove('checked'));
+    }
+    if (filesInfo) Object.values(filesInfo).forEach((info) => {
+      info.checked = false;
+      if (info.title === '' && info.tags.length === 0) {
+        info.edited = false;
+      }
+    });
   }
   
-  const reset = () => {
-    setCheckedFiles({});
-    setFilesInfo({});
+  const getCheckedFilesInfo = (fi: Record<string, FileInfo>): Record<string, FileInfo> => {
+    if (fi === undefined) return {};
+    return Object.keys(fi)
+      .reduce((reduced: Record<string, FileInfo>, filename: string) => {
+        if (fi[filename].checked) {
+          reduced[filename] = fi[filename];
+        }
+        return reduced;
+      }, {} as Record<string, FileInfo>);
   }
 
-  const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    reset();
-
-    if (event.target.files) {
-      files.current = event.target.files;
-      const info: Record<string, FileInfo> = {};
-      for (const file of Array.from(files.current)) {
-        const { type, name } = file;
-
-        const mimetype = type as keyof typeof Mimetype;
-        const mimetypeSplit = mimetype.split("/");
-        const category = mimetypeSplit[0] as keyof typeof Category;
-        let src: string;
-        if (category === Category.video) {
-          src = await getVideoSource(file);
-        }
-        else {
-          src = await getVideoSource(file);
-        }
-        info[name] = {
-          src,
-          title: '',
-          category,
-          checked: false,
-          tags: []
-        }
-      }
-      setFilesInfo(info);
-    }
-  }
-
- 
   const handleFileContent = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setShowEditModal(true);
+  }
+
+  /**
+   *  Delete selected resources
+   *  Revoke src to prevent memory leak
+   *  Remove entries from filesInfo
+   *  Remove entries from acceptedFiles
+   */
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (filesInfo) {
-      const checkedItems = Object.keys(filesInfo)
-        .reduce((reduced: Record<string, FileInfo>, filename: string) => {
-          if (filesInfo[filename].checked) {
-            reduced[filename] = filesInfo[filename];
-          }
-          return reduced;
-        }, {} as Record<string, FileInfo>);
+      const checkedFilesInfo = getCheckedFilesInfo(filesInfo);
+      const tmpFilesInfo = { ...filesInfo };
+      const filenames = Object.keys(checkedFilesInfo)
+      filenames.forEach((filename) => {
+          URL.revokeObjectURL(tmpFilesInfo[filename].src);
+          delete tmpFilesInfo[filename];
+        });
       
-      if (checkedFiles) {
-        setCheckedFiles(checkedItems);
-        setShowEditModal(true);
-      }
+      files.current = acceptedFiles.filter((file) => filenames.indexOf(file.name) === -1);
+      setFilesInfo(tmpFilesInfo);
+      removeCheckmarks();
     }
   }
 
@@ -97,7 +140,7 @@ export const Upload: React.FC = () => {
 
     if (files.current && filesInfo) {
       const memoryDao = new MemoryDao();
-      const promises = Array.from(files.current).map( async (file) => {
+      const promises = files.current.map(async (file) => {
         try {
           const fileInfo = filesInfo[file.name];
           const { name, type, size } = file;
@@ -118,6 +161,7 @@ export const Upload: React.FC = () => {
           memory.url = url;
           memory.name = newName;
           if (fileInfo.title !== '') memory.title = fileInfo.title;
+          if (fileInfo.tags.length > 0) memory.tags = fileInfo.tags;
           return memoryDao.addMemory({ ...memory });
         }
         catch (error) {
@@ -127,21 +171,44 @@ export const Upload: React.FC = () => {
       });
       
       const results = await Promise.allSettled(promises);
+
       // Report on failed upload
+
+      history.push(ROUTES.ROOT);
     }
   }
  
   return (
-    <div>
-      <input type='file' multiple name='uploadInput[]' onChange={handleOnChange}/>
-      <Button variant='contained' color='secondary' onClick={handleFileContent} >Handle File Content</Button>
-      <Button variant='contained' color='primary' onClick={handleUpload}>Upload Files</Button>
+    <Container>
+      <section className="container">
+        <div {...getRootProps({ className: 'dropzone'})}>
+          <input {...getInputProps()} />
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        </div>
+          {
+            fileRejectionItems.length > 0 ? (
+              <aside>
+                    <h4>Rejected files</h4>
+                    <ul>{fileRejectionItems}</ul>
+              </aside>
+            ) : ''
+          }
+      </section>
+
       {
         filesInfo ? <ImagePreview filesInfo={filesInfo} setFilesInfo={setFilesInfo}/> : ''
       }
+
+      <br /><br /><br /><br />
+      <Button variant='contained' color='primary' onClick={handleFileContent}>Handle File Content</Button>
+      <Button variant='contained' color='secondary' onClick={handleDelete}>Delete</Button>
+      <Button variant='contained' color='primary' onClick={handleUpload}>Upload Files</Button>
+
       {
-        checkedFiles ? <DetailsModal open={showEditModal} filesInfo={filesInfo} checkedFiles={checkedFiles} handleCloseModal={handleCloseModal} isUploading={isUploading} /> : ''
+        showEditModal ? <DetailsModal open={showEditModal} filesInfo={filesInfo} getCheckedFilesInfo={getCheckedFilesInfo} handleCloseModal={handleCloseModal} isUploading={isUploading} /> : ''
       }
-    </div>
+      
+
+    </Container>
   );
 }

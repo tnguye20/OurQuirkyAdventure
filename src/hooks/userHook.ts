@@ -14,7 +14,7 @@ const useUser = () => {
                 const data = {
                     id: u.id,
                     ...u.data()
-                } as User
+                } as User;
                 setUser(data);
             });
 
