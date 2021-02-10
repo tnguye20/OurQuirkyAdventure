@@ -19,7 +19,8 @@ import {
   Login,
   Logout,
   Slides,
-  Upload
+  Upload,
+  Header
 } from './components';
 
 function App() {
@@ -31,25 +32,35 @@ function App() {
                   <Login />
                 </UnAuthRoute>
 
-                <AuthRoute path={ ROUTES.UPLOAD }>
-                  <UserContextProvider>
+                <AuthContextWrapper path={ ROUTES.UPLOAD }>
                     <Upload />
-                  </UserContextProvider>
-                </AuthRoute>
+                    <Header />
+                </AuthContextWrapper>
 
                 <AuthRoute path={ ROUTES.LOGOUT }>
                   <Logout />
                 </AuthRoute>
 
-                <AuthRoute path={ ROUTES.ROOT }>
+                <AuthContextWrapper path={ ROUTES.ROOT }>
                   <MemoryContextProvider>
                     <Slides />
+                    <Header />
                   </MemoryContextProvider>
-                </AuthRoute>
+                </AuthContextWrapper>
             </Switch>
           </Router>
     </AuthContextProvider>
   );
+}
+
+const AuthContextWrapper: React.FC<any> = ({ children, path }) => {
+  return (
+    <AuthRoute path={ path }>
+      <UserContextProvider>
+        { children }
+      </UserContextProvider>
+    </AuthRoute>
+  )
 }
 
 export default App;

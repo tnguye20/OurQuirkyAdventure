@@ -6,6 +6,7 @@ import {
     Logout
 } from './Authentication';
 import { Upload } from './Upload';
+import { Header } from './Header';
 
 export {
     AuthRoute,
@@ -13,5 +14,6 @@ export {
     Login,
     Logout,
     Slides,
-    Upload
+    Upload,
+    Header
 };

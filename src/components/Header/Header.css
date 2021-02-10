@@ -1,0 +1,16 @@
+#header {
+  z-index: 10;
+  position: fixed !important;
+  width: 10%;
+  height: 10%;
+  top: 0;
+  left: 0;
+}
+
+.subItem {
+  padding-left: 35px !important;
+}
+
+.navActive {
+  background-color: teal;
+}
