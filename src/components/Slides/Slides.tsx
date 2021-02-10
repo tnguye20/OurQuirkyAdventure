@@ -110,17 +110,23 @@ export const Slides: React.FC = () => {
             else {
                 handleInterval(5000);
             }
-
-            const nextIndex: number = eventKey + 1;
-            const nextEl = document.querySelector(`.loaded_slide_${nextIndex}`) as HTMLElement;
-            if (!nextEl && nextIndex < memories.length) {
-                loadElement(nextIndex);
-            }
         }
         else {
             loadElement(eventKey);
         }
-    }
+
+        const nextIndex: number = eventKey + 1;
+        const prevIndex: number = memories.length - 1 - eventKey;
+        if (nextIndex < memories.length) {
+            const nextEl = document.querySelector(`.loaded_slide_${nextIndex}`) as HTMLElement;
+            if(!nextEl) loadElement(nextIndex);
+        }
+        // Maybe a bad decision
+        if (prevIndex > 0) {
+            const prevEl = document.querySelector(`.loaded_slide_${prevIndex}`) as HTMLElement;
+            if(!prevEl) loadElement(prevIndex);
+        }
+}
 
     return (
         <div className='slideContainer'>
