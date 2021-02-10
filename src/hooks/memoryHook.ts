@@ -21,7 +21,7 @@ const useMemory = () => {
         } as Memory;
       });
       setMemories(data);
-      // setMemories(data.filter(m => m.category === 'video'));
+      // setMemories(data.filter(m => m.latitude));
     });
 
     return () => unsubscribe();

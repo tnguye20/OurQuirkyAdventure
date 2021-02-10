@@ -28,7 +28,7 @@ export interface IMemory {
     country?: string | null,
     countryCode?: string | null,
     formattedAddress?: string | null,
-    neighnbourhood?: string | null,
+    neighbourhood?: string | null,
     streetName?: string | null,
     streetNumber?: string | null,
     zipcode?: string | null,
@@ -55,7 +55,7 @@ export class Memory implements IMemory {
     country: string | null = null;
     countryCode: string | null = null;
     formattedAddress: string | null = null;
-    neighnbourhood: string | null = null;
+    neighbourhood: string | null = null;
     streetName: string | null = null;
     streetNumber: string | null = null;
     zipcode: string | null = null;
