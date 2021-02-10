@@ -13,6 +13,7 @@ export const Slides: React.FC = () => {
     // const elements = React.useRef<Element[]>([]);
     const [interval, setInterval] = React.useState<number>(5000);
     const { memories } = useMemoryValue();
+    console.log(memories);
 
     const handleInterval = (i: number) => {
         if (i !== interval) {
@@ -69,10 +70,17 @@ export const Slides: React.FC = () => {
         }
     }
 
+    const loadIfNeeded = (index: number) => {
+        const el = document.querySelector(`.loaded_slide_${index}`);
+        if (el === null) {
+            loadElement(index);
+        }
+    };
+
     React.useEffect(() => {
         if (memories.length > 0) {
-            loadElement(0);
-            if (memories.length > 0) loadElement(1);
+            loadIfNeeded(0);
+            if (memories.length > 0) loadIfNeeded(1);
         }
     }, [memories]);
 
