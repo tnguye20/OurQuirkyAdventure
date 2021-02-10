@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import {useDropzone} from 'react-dropzone';
-import { Container } from '@material-ui/core';
+import { Backdrop, CircularProgress, Container } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { ImagePreview } from './ImagePreview';
 import { DetailsModal } from './DetailsModal';
+import { ActionButtons } from './ActionButtons';
 
 import './Upload.css';
 
@@ -108,7 +109,11 @@ export const Upload: React.FC = () => {
   }
 
   const handleFileContent = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setShowEditModal(true);
+    if (filesInfo) {
+      if (Object.keys(getCheckedFilesInfo(filesInfo)).length > 0) {
+        setShowEditModal(true);
+      }
+    }
   }
 
   /**
@@ -139,42 +144,48 @@ export const Upload: React.FC = () => {
     const now = Date.now();
 
     if (files.current && filesInfo) {
-      const memoryDao = new MemoryDao();
-      const promises = files.current.map(async (file) => {
-        try {
-          const fileInfo = filesInfo[file.name];
-          const { name, type, size } = file;
+      try { 
+        const memoryDao = new MemoryDao();
+        const promises = files.current.map(async (file) => {
+          try {
+            const fileInfo = filesInfo[file.name];
+            const { name, type, size } = file;
 
-          const mimetype = type as keyof typeof Mimetype;
-          const mimetypeSplit = mimetype.split("/");
-          const category = mimetypeSplit[0] as keyof typeof Category;
-          const extension = mimetypeSplit[1].toUpperCase() as keyof typeof Extension;
+            const mimetype = type as keyof typeof Mimetype;
+            const mimetypeSplit = mimetype.split("/");
+            const category = mimetypeSplit[0] as keyof typeof Category;
+            const extension = mimetypeSplit[1].toUpperCase() as keyof typeof Extension;
 
-          const nameOnly = name.split(".")[0];
-          const newName = `${nameOnly}_${now}.${extension}`;
-          const fullPath = `${uid}/${category}/${newName}`;
-          
-          const uploadTaskSnapshot = await storage.child(fullPath).put(file);
-          const url = await uploadTaskSnapshot.ref.getDownloadURL();
+            const nameOnly = name.split(".")[0];
+            const newName = `${nameOnly}_${now}.${extension}`;
+            const fullPath = `${uid}/${category}/${newName}`;
+            
+            const uploadTaskSnapshot = await storage.child(fullPath).put(file);
+            const url = await uploadTaskSnapshot.ref.getDownloadURL();
 
-          const memory = new Memory(name, size, uid!, category, extension, mimetype);
-          memory.url = url;
-          memory.name = newName;
-          if (fileInfo.title !== '') memory.title = fileInfo.title;
-          if (fileInfo.tags.length > 0) memory.tags = fileInfo.tags;
-          return memoryDao.addMemory({ ...memory });
-        }
-        catch (error) {
-          console.log(error);
-          return Promise.reject();
-        }
-      });
-      
-      const results = await Promise.allSettled(promises);
-
-      // Report on failed upload
-
-      history.push(ROUTES.ROOT);
+            const memory = new Memory(name, size, uid!, category, extension, mimetype);
+            memory.url = url;
+            memory.name = newName;
+            if (fileInfo.title !== '') memory.title = fileInfo.title;
+            if (fileInfo.tags.length > 0) memory.tags = fileInfo.tags;
+            return memoryDao.addMemory({ ...memory });
+          }
+          catch (error) {
+            console.log(error);
+            return Promise.reject();
+          }
+        });
+        
+        // Report on failed upload
+        const results = await Promise.allSettled(promises);
+        history.push(ROUTES.ROOT);
+      }
+      catch (error) {
+        console.log(error);
+      }
+      finally {
+        setIsUploading(false);
+      }
     }
   }
  
@@ -200,15 +211,21 @@ export const Upload: React.FC = () => {
       }
 
       <br /><br /><br /><br />
-      <Button variant='contained' color='primary' onClick={handleFileContent}>Handle File Content</Button>
+      {/* <Button variant='contained' color='primary' onClick={handleFileContent}>Handle File Content</Button>
       <Button variant='contained' color='secondary' onClick={handleDelete}>Delete</Button>
-      <Button variant='contained' color='primary' onClick={handleUpload}>Upload Files</Button>
+      <Button variant='contained' color='primary' onClick={handleUpload}>Upload Files</Button> */}
 
       {
         showEditModal ? <DetailsModal open={showEditModal} filesInfo={filesInfo} getCheckedFilesInfo={getCheckedFilesInfo} handleCloseModal={handleCloseModal} isUploading={isUploading} /> : ''
       }
       
 
+      <Backdrop open={isUploading} className='backdrop'>
+        <h4><i>Uploading...</i></h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
+      <ActionButtons handleFileContent={handleFileContent} handleDelete={handleDelete} handleUpload={handleUpload} canUpload={acceptedFiles.length > 0}/>
     </Container>
   );
 }

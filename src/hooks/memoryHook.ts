@@ -7,7 +7,6 @@ const useMemory = () => {
   const { authUser } = useAuthValue();
   const [memories, setMemories] = useState<Memory[]>([]);
   const [filter, setFilter] = useState<string>();
-  console.log('useMemory Loaded')
   
   useEffect(() => {
     const memoryDao = new MemoryDao();
@@ -21,7 +20,6 @@ const useMemory = () => {
           ...memory.data()
         } as Memory;
       });
-      console.log(data);
       setMemories(data);
       // setMemories(data.filter(m => m.category === 'video'));
     });
