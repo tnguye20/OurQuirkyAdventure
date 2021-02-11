@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useUserValue } from '../../contexts';
-import { UserDao } from '../../daos';
+import { UserCriteriaDao } from '../../daos';
 
 import {
   Dialog,
@@ -13,7 +13,7 @@ import {
   Chip
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { FileInfo } from '../../interfaces';
+import { FileInfo, UserCriteria } from '../../interfaces';
 import { ArrayIsEqual } from '../../utils';
 
 export const DetailsModal: React.FC<any> = ({
@@ -24,9 +24,11 @@ export const DetailsModal: React.FC<any> = ({
   isUploading
 }) => {
   const { user } = useUserValue();
-  const [ title, setTitle ] = React.useState<string>('');
-  const [ collections, setCollections ] = React.useState<string[]>([]);
-  const [ checkedFilesInfo, setCheckedFilesInfo ] = React.useState<Record<string, FileInfo> | undefined>();
+  const [title, setTitle] = React.useState<string>('');
+  const [collections, setCollections] = React.useState<string[]>([]);
+  const [checkedFilesInfo, setCheckedFilesInfo] = React.useState<Record<string, FileInfo> | undefined>();
+  const [tags, setTags] = React.useState<Array<string>>([]);
+  const userCriteriaDao = React.useRef<UserCriteriaDao>(new UserCriteriaDao());
 
   React.useEffect(() => {
     const cfi: Record<string, FileInfo> = getCheckedFilesInfo(filesInfo);
@@ -49,15 +51,23 @@ export const DetailsModal: React.FC<any> = ({
         setCollections(reduced.tags);
       }
     }
+
+    const loadTags = async () => {
+      if (user) {
+        userCriteriaDao.current.setUserID(user.id);
+        const userCriteria = await userCriteriaDao.current.getUserCriteriaByUserID();
+        setTags(userCriteria.tags);
+      }
+    }
+    loadTags();
   }, []);
 
   const addToCollection = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     
-    // Add new tags to user's collections if possible
-    const totalTags = Array.from(new Set([...user!.collections, ...collections]));
-    const userDao = new UserDao(user!.id);
-    await userDao.updateUser('collections', totalTags);
+    // // Add new tags to user's collections if possible
+    // const totalTags = Array.from(new Set([...tags, ...collections]));
+    // await userCriteriaDao.current.updateUserCriteria({tags: totalTags});
 
     Object.keys(checkedFilesInfo!).forEach((filename) => {
       filesInfo[filename].title = title; filesInfo[filename].edited = true;
@@ -94,7 +104,7 @@ export const DetailsModal: React.FC<any> = ({
                     if (newValue.length <= 10) setCollections([...newValue]);
                 }}
                 id="collectionsSelect"
-                options={user ? user.collections.map( item => item ) : []}
+                options={tags}
                 style={{ width: "100%" }}
                 renderTags={
                     (value, getTagProps) =>
