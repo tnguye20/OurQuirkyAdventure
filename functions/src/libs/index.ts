@@ -9,9 +9,11 @@ const admin = a.initializeApp({
 
 const db = admin.firestore();
 const storage = admin.storage().bucket();
+const auth = admin.auth();
 
 export {
   admin,
   db,
-  storage
+  storage,
+  auth
 };

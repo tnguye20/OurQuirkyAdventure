@@ -1,4 +1,5 @@
-// import * as functions from 'firebase-functions';
+import { https } from 'firebase-functions';
+import app from './app';
 
 import {
   extractMemoryInfo,
@@ -7,13 +8,12 @@ import {
   userCriteriaUpdate
 } from './triggers';
 
-// exports.helloWorld = functions.https.onRequest((req, res) => {
-//   res.json({result: `Thang's API is up and running`});
-// });
+const api = https.onRequest(app);
 
 export {
   extractMemoryInfo,
   removeMemory,
   removeMemoryFile,
-  userCriteriaUpdate
+  userCriteriaUpdate,
+  api
 };

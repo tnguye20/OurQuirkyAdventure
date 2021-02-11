@@ -15,3 +15,7 @@ export class UserCriteria implements IUserCriteria{
   takenYears: string[] = [];
   categories: string[] = [];
 }
+export class FilterCriteria extends UserCriteria{
+  fromDate: Date | null = null;
+  toDate: Date | null = null;
+}
