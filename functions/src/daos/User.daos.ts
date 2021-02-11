@@ -2,8 +2,8 @@ import { db } from '../libs';
 import { User } from '../interfaces';
 
 export default class UserDao {
-    ref: firebase.firestore.CollectionReference;
-    userRef: firebase.firestore.DocumentReference | null = null;
+    ref: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
+    userRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> | null = null;
 
     constructor(userID?: string) {
         this.ref = db.collection('users');

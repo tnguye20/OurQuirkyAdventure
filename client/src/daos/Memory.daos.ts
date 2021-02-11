@@ -1,4 +1,4 @@
-import { db } from '../lib';
+import { db } from '../libs';
 import { Memory } from '../interfaces';
 
 export default class MemoryDao {

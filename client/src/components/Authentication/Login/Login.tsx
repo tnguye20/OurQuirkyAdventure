@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 
 import { ROUTES } from '../../../shared/config';
-import { auth } from '../../../lib';
+import { auth } from '../../../libs';
 import { useAuthValue } from '../../../contexts';
 
 import './Login.css';

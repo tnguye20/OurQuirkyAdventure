@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from '../lib';
+import { auth } from '../libs';
 import { AuthToken } from '../interfaces';
 
 const useAuth = () => {

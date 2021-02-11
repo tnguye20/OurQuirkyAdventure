@@ -9,7 +9,7 @@ import { ActionButtons } from './ActionButtons';
 
 import './Upload.css';
 
-import { storage } from '../../lib';
+import { storage } from '../../libs';
 import { useAuthValue } from '../../contexts';
 import { Category, Extension, Mimetype, Memory } from '../../interfaces/Memory';
 import { FileInfo } from '../../interfaces';

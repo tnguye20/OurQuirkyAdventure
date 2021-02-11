@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
 
 import { ROUTES } from '../../../shared/config';
-import { auth } from '../../../lib';
+import { auth } from '../../../libs';
 import { useAuthValue } from '../../../contexts';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
