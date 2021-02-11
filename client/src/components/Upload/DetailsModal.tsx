@@ -72,7 +72,7 @@ export const DetailsModal: React.FC<any> = ({
         <DialogTitle id="form-dialog-title">Tagging</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Choose from existing collections or create new ones
+                Choose from existing tags or create new ones. Limit to 10 tags per item.
             </DialogContentText>
 
             <TextField
@@ -91,7 +91,7 @@ export const DetailsModal: React.FC<any> = ({
                 freeSolo
                 value={collections}
                 onChange={ (e, newValue) => {
-                    setCollections([...newValue]);
+                    if (newValue.length <= 10) setCollections([...newValue]);
                 }}
                 id="collectionsSelect"
                 options={user ? user.collections.map( item => item ) : []}

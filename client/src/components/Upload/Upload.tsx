@@ -211,10 +211,6 @@ export const Upload: React.FC = () => {
       }
 
       <br /><br /><br /><br />
-      {/* <Button variant='contained' color='primary' onClick={handleFileContent}>Handle File Content</Button>
-      <Button variant='contained' color='secondary' onClick={handleDelete}>Delete</Button>
-      <Button variant='contained' color='primary' onClick={handleUpload}>Upload Files</Button> */}
-
       {
         showEditModal ? <DetailsModal open={showEditModal} filesInfo={filesInfo} getCheckedFilesInfo={getCheckedFilesInfo} handleCloseModal={handleCloseModal} isUploading={isUploading} /> : ''
       }

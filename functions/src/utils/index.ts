@@ -1,11 +1,13 @@
 import {
   imageMagickOutputToObject
-} from './imageMagick';
+} from './imageMagick.utils';
 import {
   geoCalculate
-} from './geo';
+} from './geo.utils';
+import { ArrayIsEqual } from './ArrayIsEqual.utils';
 
 export {
   imageMagickOutputToObject,
-  geoCalculate
+  geoCalculate,
+  ArrayIsEqual
 };

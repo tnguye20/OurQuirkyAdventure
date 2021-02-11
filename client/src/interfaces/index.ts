@@ -1,6 +1,7 @@
 import { User } from './User';
 import { Memory, Category } from './Memory';
 import { AuthToken } from './AuthToken';
+import { FilterCriteria } from './Filter';
  
 export interface FileInfo {
   title: string,
@@ -11,9 +12,13 @@ export interface FileInfo {
   tags: Array<string>
 }
 
+export type {
+  FilterCriteria
+};
+
 export {
     User,
     AuthToken,
     Memory,
-    Category
+    Category,
 };

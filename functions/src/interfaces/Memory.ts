@@ -45,6 +45,8 @@ export interface IMemory {
     extension: keyof typeof Extension,
     mimetype: keyof typeof Mimetype,
     takenDate: firebase.firestore.Timestamp,
+    takenMonth?: string | null,
+    takenYear?: string | null,
     uploadedDate: firebase.firestore.Timestamp,
     tags?: Array<string>,
     url?: string,
@@ -74,6 +76,8 @@ export class Memory implements IMemory {
     takenDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
     uploadedDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
     tags: string[] = [];
+    takenMonth: string | null= null;
+    takenYear:string | null= null;
     url: string = '';
 
     constructor(

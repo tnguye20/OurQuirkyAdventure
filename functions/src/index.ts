@@ -3,7 +3,8 @@
 import {
   extractMemoryInfo,
   removeMemory,
-  removeMemoryFile
+  removeMemoryFile,
+  userCriteriaUpdate
 } from './triggers';
 
 // exports.helloWorld = functions.https.onRequest((req, res) => {
@@ -13,5 +14,6 @@ import {
 export {
   extractMemoryInfo,
   removeMemory,
-  removeMemoryFile
+  removeMemoryFile,
+  userCriteriaUpdate
 };

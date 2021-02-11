@@ -20,8 +20,8 @@ const useMemory = () => {
           ...memory.data()
         } as Memory;
       });
+      console.log(data);
       setMemories(data);
-      // setMemories(data.filter(m => m.latitude));
     });
 
     return () => unsubscribe();

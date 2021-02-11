@@ -1,7 +1,7 @@
 import { User } from './User';
 import { Memory, Category } from './Memory';
 import { AuthToken } from './AuthToken';
-
+import { UserCriteria } from './UserCriteria';
 export interface ImageMagickMetadata {
   Geometry: string,
   Properties: {
@@ -18,5 +18,6 @@ export {
     User,
     AuthToken,
     Memory,
-    Category
+    Category,
+    UserCriteria
 };
