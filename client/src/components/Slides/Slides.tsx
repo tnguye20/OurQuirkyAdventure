@@ -145,9 +145,17 @@ export const Slides: React.FC = () => {
                                 <div className='slide_item' id={`item_${index}`} data-src={memory.url} data-type={memory.category}></div>
                                 <Carousel.Caption className='slideCaption'>
                                     <p><b>{memory.title}</b></p>
+                                    <p className='subtext'>{memory.takenDate.toDate().toUTCString()}</p>
                                     {
                                         memory.latitude ? (
-                                            <p className='subtext'>{ `${memory.neighbourhood} ${memory.streetName}, ${memory.city}, ${memory.state}` }</p>
+                                            <p className='subtext'>
+                                                {`
+                                                    ${memory.neighbourhood} 
+                                                    ${memory.streetName}, 
+                                                    ${memory.city}
+                                                    ${memory.state}
+                                                `}
+                                            </p>
                                             ) : ""
                                         // }
                                     }
