@@ -41,12 +41,13 @@ export default class MemoryDao {
   }
     
   async getMemory(): Promise<Memory> {
-      const memory = await this.memoryRef!.get();
-      if (memory.exists) {
-          return {
-              id: memory.id,
-              ...memory.data()
-          } as Memory
+      const m = await this.memoryRef!.get();
+      if (m.exists) {
+        const memory = {
+          ...m.data()
+        } as Memory;
+        memory.id = m.id;
+        return memory;
       }
       throw new Error('Invalid Memory');
   }
@@ -61,6 +62,7 @@ export default class MemoryDao {
         const memory = {
           ...m.data()
         } as Memory;
+        memory.id = m.id;
         data.push(memory);
       });
     }

@@ -35,7 +35,7 @@ export interface IMemory {
     provider?: string | null,
     state?: string | null,
     latitude?: string | null,
-    longtitude?: string | null,
+    longitude?: string | null,
     id?: string | null,
     name: string,
     size: number,
@@ -64,7 +64,7 @@ export class Memory implements IMemory {
     provider: string | null = null;
     state: string | null = null;
     latitude: string | null = null;
-    longtitude: string | null = null;
+    longitude: string | null = null;
     id: string | null = null;
     name: string;
     title: string = 'One of my best memories with you';
