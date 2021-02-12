@@ -5,7 +5,7 @@
   top: 0;
 }
 
-.slideContainer img {
+.slideContainer img:not(.noslide) {
   object-fit: contain !important;
   text-align: center;
   margin: auto;

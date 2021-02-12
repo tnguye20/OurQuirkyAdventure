@@ -11,6 +11,7 @@ import {
 import {
     getDateFromTimestamp
 } from '../../utils';
+import { NoSlide } from '../NoSlide/';
 
 export const Slides: React.FC = () => {
     // const elements = React.useRef<Element[]>([]);
@@ -141,6 +142,9 @@ export const Slides: React.FC = () => {
                 pause={false}
             >
                 {
+                    memories.length === 0
+                        ? <NoSlide />
+                        : 
                     memories
                     .map((memory: Memory, index) => {
                         return (
