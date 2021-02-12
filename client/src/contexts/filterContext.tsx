@@ -11,6 +11,7 @@ interface  FilterContextValue {
     saveFilterCriteria: (f: FilterCriteria) => void,
     resetFilterCriteria: () => void,
     isFilterEmpty: () => boolean,
+    filterLoaded: boolean,
     filterCriteria: FilterCriteria,
 }
 
@@ -25,6 +26,7 @@ export const FilterContextProvider: React.FC = ({ children }) => {
       resetFilterCriteria,
       isFilterEmpty,
       filterCriteria,
+      filterLoaded
     } = useFilter();
 
     return (
@@ -35,7 +37,8 @@ export const FilterContextProvider: React.FC = ({ children }) => {
           saveFilterCriteria,
           resetFilterCriteria,
           isFilterEmpty,
-          filterCriteria
+          filterCriteria,
+          filterLoaded
         }}>
             { children }
         </FilterContext.Provider>

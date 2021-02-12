@@ -4,6 +4,7 @@ import { FilterCriteria } from '../interfaces';
 const useFilter = () => {
   const [filterCriteria, setFilterCriteria] = React.useState<FilterCriteria>(new FilterCriteria());
   const [filterState, setOpenFilter] = React.useState<boolean>(false);
+  const [filterLoaded, setFilterLoaded] = React.useState<boolean>(false);
 
   const openFilter = () => {
     setOpenFilter(true);
@@ -42,6 +43,7 @@ const useFilter = () => {
         console.log(error);
       }
     }
+    setFilterLoaded(true);
   }, []);
 
   return {
@@ -51,7 +53,8 @@ const useFilter = () => {
     filterCriteria,
     saveFilterCriteria,
     resetFilterCriteria,
-    isFilterEmpty
+    isFilterEmpty,
+    filterLoaded
   }
 }
 

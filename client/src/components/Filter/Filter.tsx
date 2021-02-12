@@ -83,7 +83,7 @@ export const Filter: React.FC<{
         if (takenYears.length > 0){
             filter.takenYears = takenYears;
         }
-        if (category) {
+        if (category && category !== 'all') {
             filter.categories = [category];
         }
         saveFilterCriteria(filter);
@@ -222,13 +222,6 @@ export const Filter: React.FC<{
             Cancel
         </Button>
         <Button
-            disabled={
-                tags.length === 0  &&
-                cities.length === 0 &&
-                states.length === 0 &&
-                takenYears.length === 0 &&
-                takenMonths.length === 0
-            }
             onClick={aggregateFilters}
             color="primary"
             variant="outlined"

@@ -47,6 +47,17 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'lightseagreen'
     },
   },
+  button: {
+    textDecoration: 'none',
+    color: 'white',
+    width: '100%',
+    height: '100%',
+    "&:hover, &:focus": {
+      color: 'white',
+      textDecoration: 'none',
+      backgroundColor: 'lightseagreen'
+    },
+  },
   paper: {
     color: "white",
     background: "rgba(29, 32, 33, 0.5)"
@@ -100,7 +111,7 @@ export const Header = () => {
         </NavLink>
 
         <Divider />
-        <ListItem button onClick={() => { setOpen(false); openFilter(); } }>
+        <ListItem className={ classes.button } button onClick={() => { setOpen(false); openFilter(); } }>
           <ListItemIcon><FilterIcon htmlColor={"white"}/></ListItemIcon>
           <ListItemText primary="Filter Memories" />
         </ListItem>
