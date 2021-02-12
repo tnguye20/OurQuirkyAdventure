@@ -72,6 +72,9 @@ export default class MemoryDao {
   async addMemory(memory: Memory) {
     return await this.ref.add(memory);
   }
+  async updateMemory(fields: Record<string, any>) {
+    return await this.memoryRef!.update({...fields});
+  }
 
   async getMemoryByFileName(filename: string): Promise<Memory | null> {
     const memories = await this.ref.where('name', '==', filename).get();

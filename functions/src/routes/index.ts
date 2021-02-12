@@ -5,7 +5,8 @@ import {
   verifyAuth
 } from '../middlewares';
 import {
-  getMemoryByUserController
+  getMemoryByUserController,
+  userCriteriaGenerateController
 } from '../controllers';
 
 // Init router and path
@@ -22,6 +23,7 @@ router.post('/', (req : Request, res: Response) => {
  * AUTH ROUTES
  */
 router.post('/getMemoryByUser', verifyAuth, expressCallback(getMemoryByUserController));
+router.post('/userCriteriaGenerate', verifyAuth, expressCallback(userCriteriaGenerateController));
 
 // Export the base-router
 export default router;

@@ -140,6 +140,7 @@ export const Slides: React.FC = () => {
                 {
                     memories
                     .map((memory: Memory, index) => {
+                        // console.log(memory.takenDate);
                         return (
                             <Carousel.Item key={index} id={`container_${index}`} className='slide_container'>
                                 <div className='slide_item' id={`item_${index}`} data-src={memory.url} data-type={memory.category}></div>

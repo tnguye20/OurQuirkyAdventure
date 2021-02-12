@@ -41,7 +41,7 @@ export const Filter: React.FC<{
     const [ defaultTakenMonths, setDefaultTakenMonths ] = useState<Array<string>>([]);
     const [ takenYears, setTakenYears ] = useState<Array<string>>([]);
     const [ defaultTakenYears, setDefaultTakenYears ] = useState<Array<string>>([]);
-    const [ category, setCategory ] = useState<string>('');
+    const [ category, setCategory ] = useState<string>();
 
     useEffect(() => {
         const init = async () => {
@@ -83,7 +83,7 @@ export const Filter: React.FC<{
         if (takenYears.length > 0){
             filter.takenYears = takenYears;
         }
-        if (category !== 'all') {
+        if (category) {
             filter.categories = [category];
         }
         saveFilterCriteria(filter);

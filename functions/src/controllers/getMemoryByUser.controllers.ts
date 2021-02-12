@@ -1,9 +1,13 @@
 import { Request } from 'express';
 import { FilterCriteria } from '../interfaces';
 import { getMemoryByUser } from '../usecases';
+import { logger } from 'firebase-functions';
 
 const getMemoryByUserController = async (req: Request) => {
-  const { uid } = req.body;
+  logger.info('>>>Enter getMemoryByUserController');
+  const { uid, email } = req.body;
+  logger.info(`Querying for user ${uid} with email - ${email}`);
+
   let filterCriteria: FilterCriteria | null = null;
   if (req.body.filter) {
     filterCriteria = req.body.filter;
@@ -16,8 +20,10 @@ const getMemoryByUserController = async (req: Request) => {
           }
         });
   }
+  logger.info('Filter Criteria: ', filterCriteria);
   const response = await getMemoryByUser(uid, filterCriteria);
 
+  logger.info('<<<Exit getMemoryByUserController');
   return {
     body: response
   };
