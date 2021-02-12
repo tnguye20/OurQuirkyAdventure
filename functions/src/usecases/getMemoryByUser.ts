@@ -15,6 +15,7 @@ const CriteriaMapper = {
 const getMemoryByUser = async (uid: string, filterCriteria: FilterCriteria | null, limit?: number) => {
   const memoryDao = new MemoryDao();
   memoryDao.setUser(uid);
+  memoryDao.setOrderBy('takenDate');
 
   // Filter And Limit response
   // Since tags is a heavy lifter, we will use native firestore to filter it

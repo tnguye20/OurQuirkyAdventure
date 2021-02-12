@@ -34,7 +34,6 @@ function App() {
 
                 <AuthContextWrapper path={ ROUTES.UPLOAD }>
                     <Upload />
-                    <Header />
                 </AuthContextWrapper>
 
                 <AuthRoute path={ ROUTES.LOGOUT }>
@@ -44,7 +43,6 @@ function App() {
                 <AuthContextWrapper path={ ROUTES.ROOT }>
                   <MemoryContextProvider>
                     <Slides />
-                    <Header />
                   </MemoryContextProvider>
                 </AuthContextWrapper>
             </Switch>
@@ -58,6 +56,7 @@ const AuthContextWrapper: React.FC<any> = ({ children, path }) => {
     <AuthRoute path={ path }>
       <UserContextProvider>
         { children }
+        <Header />
       </UserContextProvider>
     </AuthRoute>
   )
