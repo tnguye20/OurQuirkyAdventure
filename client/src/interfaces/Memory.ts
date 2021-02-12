@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import { firestore } from 'firebase';
 import { IUser } from './User';
 
 export enum Category {
@@ -73,8 +73,8 @@ export class Memory implements IMemory {
     category: keyof typeof Category;
     extension: keyof typeof Extension;
     mimetype: keyof typeof Mimetype;
-    takenDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
-    uploadedDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+    takenDate: firebase.firestore.Timestamp = firestore.Timestamp.now();
+    uploadedDate: firebase.firestore.Timestamp = firestore.Timestamp.now();
     tags: string[] = [];
     takenMonth = null;
     takenYear = null;
