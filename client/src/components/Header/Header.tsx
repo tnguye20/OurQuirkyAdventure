@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-// import { useFilterValue, useUserValue } from '../../contexts';
-import { useUserValue } from '../../contexts';
+import { useFilterValue, useUserValue } from '../../contexts';
 import {
   makeStyles,
   Button,
@@ -24,6 +23,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import './Header.css';
 
 import { ROUTES } from '../../shared/config';
+import { Filter } from '../Filter';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,7 +55,15 @@ const useStyles = makeStyles(theme => ({
 
 export const Header = () => {
   const classes = useStyles();
-  // const { setOpenFilter, filterCriteria, setFilterCriteria } = useFilterValue();
+  const {
+    filterState,
+    openFilter,
+    closeFilter,
+    filterCriteria,
+    resetFilterCriteria,
+    saveFilterCriteria,
+    isFilterEmpty
+  } = useFilterValue()!;
   const { user } = useUserValue();
   const [ open, setOpen ] = useState(false);
 
@@ -92,23 +100,21 @@ export const Header = () => {
         </NavLink>
 
         <Divider />
-        {/* <ListItem button onClick={ () => { setOpen(false); setOpenFilter(true) } }> */}
-        <ListItem button onClick={ () => { setOpen(false) } }>
+        <ListItem button onClick={() => { setOpen(false); openFilter(); } }>
           <ListItemIcon><FilterIcon htmlColor={"white"}/></ListItemIcon>
           <ListItemText primary="Filter Memories" />
         </ListItem>
-        {/* {
-         filterCriteria.size > 0 ? (
+        {
+         !isFilterEmpty() ? (
            <ListItem button className="subItem" onClick={ () => {
-             setOpen(false);
-             localStorage.removeItem("filterCriteria");
-             setFilterCriteria(new Map());
+              setOpen(false);
+              resetFilterCriteria();
            } }>
             <ListItemIcon><ClearAllIcon htmlColor={"white"}/></ListItemIcon>
             <ListItemText primary="Reset Filters" />
           </ListItem>
          ) : ""
-        } */}
+        }
 
         <Divider/>
         <NavLink className={ classes.link } to={ ROUTES.USER_SETTINGS } activeClassName="navActive" onClick={ e => setOpen(false) } >
@@ -140,6 +146,12 @@ export const Header = () => {
       <Drawer open={open} onClose={ e => setOpen(false)} classes={{ paper: classes.paper }}>
         { MenuList() }
       </Drawer>
+
+      {
+        filterState ? (
+          <Filter filterState={filterState} closeFilter={closeFilter} filterCriteria={filterCriteria} saveFilterCriteria={saveFilterCriteria} />
+        ) : ''
+      }
     </div>
   );
 }

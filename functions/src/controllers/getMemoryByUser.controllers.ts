@@ -8,7 +8,13 @@ const getMemoryByUserController = async (req: Request) => {
   if (req.body.filter) {
     filterCriteria = req.body.filter;
     Object.values(filterCriteria!)
-      .forEach((criteria: Array<string>) => {if (criteria.length > 10) throw new Error('Filter can only be at most 10 items')});
+        .forEach((criteria: Array<string> | Date | null) => {
+          if (Array.isArray(criteria)) {
+            if (criteria.length > 10) {
+              throw new Error('Filter can only be at most 10 items');
+            }
+          }
+        });
   }
   const response = await getMemoryByUser(uid, filterCriteria);
 

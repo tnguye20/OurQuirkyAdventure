@@ -11,7 +11,8 @@ import { ROUTES } from './shared/config';
 import {
   AuthContextProvider,
   UserContextProvider,
-  MemoryContextProvider
+  MemoryContextProvider,
+  FilterContextProvider
 } from './contexts';
 import {
   AuthRoute,
@@ -55,8 +56,10 @@ const AuthContextWrapper: React.FC<any> = ({ children, path }) => {
   return (
     <AuthRoute path={ path }>
       <UserContextProvider>
-        { children }
-        <Header />
+        <FilterContextProvider>
+          { children }
+          <Header />
+        </FilterContextProvider>
       </UserContextProvider>
     </AuthRoute>
   )

@@ -16,12 +16,18 @@ import {
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import './Filter.css';
+import { FilterCriteria } from '../../interfaces';
 
-export const Filter = ({
-    // open,
-    // handleClose,
-    // filterCriteria,
-    // setFilterCriteria
+export const Filter: React.FC<{
+    filterState: boolean,
+    closeFilter: () => void,
+    saveFilterCriteria: (f: FilterCriteria) => void,
+    filterCriteria: FilterCriteria,
+}> = ({
+    filterState,
+    closeFilter,
+    filterCriteria,
+    saveFilterCriteria
 }) => {
     const { user } = useUserValue();
 
@@ -50,10 +56,18 @@ export const Filter = ({
             }
         }
         init();
+
+        //Load Current Filter if there is any
+        if (filterCriteria.tags.length > 0) setTags(filterCriteria.tags);
+        if (filterCriteria.cities.length > 0) setCities(filterCriteria.cities);
+        if (filterCriteria.states.length > 0) setStates(filterCriteria.states);
+        if (filterCriteria.takenMonths.length > 0) setTakenMonths(filterCriteria.takenMonths);
+        if (filterCriteria.takenYears.length > 0) setTakenYears(filterCriteria.takenYears);
+        if (filterCriteria.categories.length > 0) setCategory(filterCriteria.categories[0]);
     }, [user])
 
     const aggregateFilters = () => {
-        const filter: Record<string, any> = {};
+        const filter = new FilterCriteria();
         if (tags.length > 0){
             filter.tags = tags;
         }
@@ -70,15 +84,14 @@ export const Filter = ({
             filter.takenYears = takenYears;
         }
         if (category !== 'all') {
-            filter.category = [category];
+            filter.categories = [category];
         }
-        // setFilterCriteria(filters);
-        localStorage.setItem("filterCriteria", JSON.stringify(filter));
-        // handleClose();
+        saveFilterCriteria(filter);
+        closeFilter();
     }
 
     return(
-    <Dialog open={true} onClose={() => {}} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}>
+    <Dialog open={filterState} onClose={closeFilter} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}>
         <DialogTitle id="form-dialog-title">Filter</DialogTitle>
         <DialogContent>
             <DialogContentText>
@@ -205,7 +218,7 @@ export const Filter = ({
 
         </DialogContent>
         <DialogActions>
-        <Button onClick={() => {}} color="secondary" variant="outlined" size="small">
+        <Button onClick={closeFilter} color="secondary" variant="outlined" size="small">
             Cancel
         </Button>
         <Button

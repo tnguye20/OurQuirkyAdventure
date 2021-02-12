@@ -13,6 +13,11 @@ import {
     MemoryContextProvider,
     useMemoryValue
 } from './memoryContext'
+import {
+    FilterContext,
+    FilterContextProvider,
+    useFilterValue
+} from './filterContext'
 
 export {
     AuthContext,
@@ -23,5 +28,8 @@ export {
     useUserValue,
     MemoryContext,
     MemoryContextProvider,
-    useMemoryValue
+    useMemoryValue,
+    FilterContext,
+    FilterContextProvider,
+    useFilterValue
 };
