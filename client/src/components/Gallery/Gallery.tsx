@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { Memory, Category } from '../../interfaces';
-import { useMemoryValue } from '../../contexts';
+import { useMemory } from '../../hooks';
 import StackGrid from "react-stack-grid";
 import './Gallery.css'
 import Container from '@material-ui/core/Container';
 
 export const Gallery: React.FC = () => {
-  const { memories } = useMemoryValue();
+  const { memories } = useMemory(7);
   return (
     <Container id='galleryContainer'>
       <StackGrid
         columnWidth='30%'
         itemComponent='div'
+        gutterHeight={9}
+        monitorImagesLoaded={true}
       >
         {
           memories.length > 0

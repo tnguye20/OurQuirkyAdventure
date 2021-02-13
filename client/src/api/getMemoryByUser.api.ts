@@ -8,7 +8,7 @@ interface APIResponse {
   headers?: Record<string, any>
 }
 
-export const getMemoryByUser = async (idToken: string, filter?: FilterCriteria): Promise<Memory[]> => {
+export const getMemoryByUser = async (idToken: string, filter?: FilterCriteria, limit?: number): Promise<Memory[]> => {
     try {
         const url = ROUTES.GET_MEMORY_BY_USER;
         const options = {
@@ -17,7 +17,11 @@ export const getMemoryByUser = async (idToken: string, filter?: FilterCriteria):
             }
         };
 
-        const rs = await axios.post(url, filter ? { filter } : {}, options);
+        const data: Record<string, any> = {};
+        if (filter) data.filter = filter;
+        if (limit) data.limit = limit;
+
+        const rs = await axios.post(url, data, options);
 
         const response: APIResponse = rs.data;
         return response.body;

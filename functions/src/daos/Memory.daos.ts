@@ -5,10 +5,11 @@ export default class MemoryDao {
   ref: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
   memoryRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> | null = null;
   userRef: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> | null = null;
-  refQuery: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> | null = null;
+  refQuery: FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
 
   constructor(memoryID?: string) {
     this.ref = db.collection('memories');
+    this.refQuery = this.ref;
     if (memoryID) this.memoryRef = this.ref.doc(memoryID);
   }
 
@@ -16,12 +17,23 @@ export default class MemoryDao {
     this.userRef = this.ref.where('user', '==', userID);
   }
 
+  setLimit(limit: number, lastRecord?: Memory) {
+    if (this.userRef) {
+      this.userRef = this.userRef.limit(limit);
+      if (lastRecord) this.userRef.startAfter({ ...lastRecord });
+    }
+    else {
+      this.refQuery = this.refQuery.limit(limit);
+      if (lastRecord) this.refQuery.startAfter({ ...lastRecord });
+    }
+  }
+
   setDateRange(fromDate: Date, toDate: Date) {
     if (this.userRef) {
       this.userRef = this.userRef.startAfter(fromDate).endBefore(toDate);
     }
     else {
-      this.refQuery = this.refQuery!.startAfter(fromDate).endBefore(toDate);
+      this.refQuery = this.refQuery.startAfter(fromDate).endBefore(toDate);
     }
   }
 

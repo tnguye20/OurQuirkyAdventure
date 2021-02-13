@@ -3,14 +3,14 @@ import { Memory } from '../interfaces';
 import { useAuthValue, useFilterValue } from '../contexts';
 import { getMemoryByUser } from '../api';
 
-const useMemory = () => {
+const useMemory = (limit?: number) => {
   const { authUser } = useAuthValue();
   const { filterCriteria, filterLoaded } = useFilterValue()!;
   const [memories, setMemories] = useState<Memory[]>([]);
   
   useEffect(() => {
     const init = async () => {
-      const data = await getMemoryByUser(authUser.idToken!, filterCriteria);
+      const data = await getMemoryByUser(authUser.idToken!, filterCriteria, limit);
       setMemories(data);
     };
 

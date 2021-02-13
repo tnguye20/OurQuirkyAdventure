@@ -43,9 +43,7 @@ function App() {
                 </AuthRoute>
 
                 <AuthContextWrapper path={ ROUTES.GALLERY }>
-                  <MemoryContextProvider>
                     <Gallery />
-                  </MemoryContextProvider>
                 </AuthContextWrapper>
                 <AuthContextWrapper path={ ROUTES.ROOT }>
                   <MemoryContextProvider>

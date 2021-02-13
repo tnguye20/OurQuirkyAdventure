@@ -5,8 +5,9 @@ import { logger } from 'firebase-functions';
 
 const getMemoryByUserController = async (req: Request) => {
   logger.info('>>>Enter getMemoryByUserController');
-  const { uid, email } = req.body;
+  const { uid, email, limit, startAfter } = req.body;
   logger.info(`Querying for user ${uid} with email - ${email}`);
+  logger.info(`Querying with limit: ${limit}`);
 
   let filterCriteria: FilterCriteria | null = null;
   if (req.body.filter) {
@@ -21,7 +22,7 @@ const getMemoryByUserController = async (req: Request) => {
         });
   }
   logger.info('Filter Criteria: ', filterCriteria);
-  const response = await getMemoryByUser(uid, filterCriteria);
+  const response = await getMemoryByUser(uid, filterCriteria, limit, startAfter);
 
   logger.info('<<<Exit getMemoryByUserController');
   return {

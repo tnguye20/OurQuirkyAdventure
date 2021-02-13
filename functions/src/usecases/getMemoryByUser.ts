@@ -13,7 +13,7 @@ const CriteriaMapper = {
   toDate: 'toDate'
 }
 
-const getMemoryByUser = async (uid: string, filterCriteria: FilterCriteria | null, limit?: number) => {
+const getMemoryByUser = async (uid: string, filterCriteria: FilterCriteria | null, limit?: number, startAfter?: number) => {
   logger.info('>>>Enter getMemoryByUser');
   const memoryDao = new MemoryDao();
   memoryDao.setUser(uid);
@@ -34,6 +34,11 @@ const getMemoryByUser = async (uid: string, filterCriteria: FilterCriteria | nul
       logger.info(`Filter with date range ${fromDate.toString()} - ${toDate.toString()}`);
       memoryDao.setDateRange(fromDate, toDate);
     }
+  }
+
+  // Set Limit
+  if (limit) {
+    memoryDao.setLimit(limit);
   }
 
   // Get The results
