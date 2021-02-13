@@ -47,7 +47,9 @@ const getMemoryByUser = async (params: GetMemoryByUserParams) => {
       memoryDao.setStartAfter(lastDoc);
     }
   }
-  if (limit) memoryDao.setLimit(limit);
+  if (limit && !filterCriteria) {
+    memoryDao.setLimit(limit);
+  }
 
   // Get The results
   let memories = await memoryDao.getAllMemories();
@@ -55,47 +57,52 @@ const getMemoryByUser = async (params: GetMemoryByUserParams) => {
 
   // Manual filter other criterias
   if (filterCriteria) {
-    const included: Memory[] = memories.filter((memory: Memory) => {
-      const included = Object.entries(filterCriteria)
-        .filter((entry) => {
-          const [k, v] = entry;
-          const filterKey = k as keyof FilterCriteria;
-          const filterValue = v as Array<string> | null;
-          if (filterKey === "tags") return false;
-          if (filterValue === null) {
-            return false;
-          }
-          else if (filterValue.length === 0) {
-            return false;
-          }
-          return true;
-        })
-        .reduce((included, currentValue) => {
-          const [k, v] = currentValue;
-          const filterKey = k as keyof FilterCriteria;
-          const filterValue = v as Array<string> | null;
-          const tmpMemory: Record<string, any> = {...memory};
-
-          if (
-            tmpMemory[CriteriaMapper[filterKey]] !== undefined &&
-            tmpMemory[CriteriaMapper[filterKey]] !== null
-          ) {
-            return included &&
-              filterValue!.indexOf(tmpMemory[CriteriaMapper[filterKey]]) !== -1;
-          }
-
-          return false;
-      }, true);
-
-      return included;
-    });
-
-    memories = included;
+    memories = filterMemory(memories, filterCriteria);
+    if (limit) memories = memories.slice(0, limit);
   }
 
   logger.info(`Length of memories after all filters: ${memories.length}`);
   logger.info('<<<Exit getMemoryByUser');
   return memories;
 };
+
+const filterMemory = (memories: Memory[], filterCriteria: FilterCriteria): Memory[] {
+  const included: Memory[] = memories.filter((memory: Memory) => {
+    const included = Object.entries(filterCriteria)
+      .filter((entry) => {
+        const [k, v] = entry;
+        const filterKey = k as keyof FilterCriteria;
+        const filterValue = v as Array<string> | null;
+        if (filterKey === "tags") return false;
+        if (filterValue === null) {
+          return false;
+        }
+        else if (filterValue.length === 0) {
+          return false;
+        }
+        return true;
+      })
+      .reduce((included, currentValue) => {
+        const [k, v] = currentValue;
+        const filterKey = k as keyof FilterCriteria;
+        const filterValue = v as Array<string> | null;
+        const tmpMemory: Record<string, any> = {...memory};
+
+        if (
+          tmpMemory[CriteriaMapper[filterKey]] !== undefined &&
+          tmpMemory[CriteriaMapper[filterKey]] !== null
+        ) {
+          return included &&
+            filterValue!.indexOf(tmpMemory[CriteriaMapper[filterKey]]) !== -1;
+        }
+
+        return false;
+    }, true);
+
+    return included;
+  });
+
+  return included;
+}
 
 export default getMemoryByUser;

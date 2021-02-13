@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Memory, Category, GetMemoryByUserParams } from '../../interfaces';
+import { GetMemoryByUserParams } from '../../interfaces';
 import { useMemory } from '../../hooks';
 import { useAuthValue, useFilterValue } from '../../contexts';
 import StackGrid from "react-stack-grid";
@@ -8,17 +8,19 @@ import Container from '@material-ui/core/Container';
 
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import { getMemoryByUser } from '../../api';
-import { MemoryDao } from '../../daos';
+import { SizeMe } from 'react-sizeme';
+import { MemoryContainer } from './MemoryContainer';
+import { LoadMoreButton } from './LoadMoreButton';
 
 export const Gallery: React.FC = () => {
-  const { memories, setMemories } = useMemory(7);
+  const { memories, setMemories } = useMemory(10);
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
-  const hasMore = React.useRef<boolean>(true);
+  const [hasMore, setHasMore] = React.useState<boolean>(true);
 
-  const handleOnDocumentBottom = async () => {
-    const lastMemory = memories[memories.length - 1];
-    if (lastMemory && hasMore.current) {
+  const loadMore = async () => {
+   const lastMemory = memories[memories.length - 1];
+    if (lastMemory && hasMore) {
       const params: GetMemoryByUserParams = {
         idToken: authUser.idToken!,
         filterCriteria,
@@ -27,12 +29,16 @@ export const Gallery: React.FC = () => {
       params.startAfter = { id: lastMemory.id };
       const data = await getMemoryByUser(params);
       if (data.length === 0) {
-        hasMore.current = true;
+        setHasMore(false);
         return;
       }
 
       setMemories([...memories, ...data]);
     }
+  }
+
+  const handleOnDocumentBottom = () => {
+    loadMore();
   };
 
   useBottomScrollListener(handleOnDocumentBottom);
@@ -40,45 +46,26 @@ export const Gallery: React.FC = () => {
   return (
     <div id='galleryContainer'>
       <Container>
-            <StackGrid
-              columnWidth='30%'
-              itemComponent='div'
-              gutterHeight={9}
-              monitorImagesLoaded={true}
-            >
-            {
-              memories.length > 0
-                ? memories.map((m) => <MemoryContainer memory={m}/>)
-                : '' 
-            }
-          </StackGrid>
-        </Container>
+        <SizeMe>
+          {
+            ({ size }) => (
+              <StackGrid
+                columnWidth={size ? (size.width! <= 375 ? '100%' : '33.33%') : '33.33%'}
+                itemComponent='div'
+                gutterHeight={9}
+                monitorImagesLoaded={true}
+              >
+              {
+                memories.length > 0
+                  ? memories.map((m) => <MemoryContainer memory={m}/>)
+                  : '' 
+              }
+              </StackGrid>
+            )
+          }
+        </SizeMe>
+        <LoadMoreButton hasMore={hasMore} loadMore={loadMore}/>
+      </Container>
     </div>
    )
-};
-
-const MemoryContainer: React.FC<any> = (prop) => {
-  const {
-    category,
-    url,
-    title
-  } = prop.memory as Memory;
-  const c = category as string;
-
-  const getImage = (url: string) => (
-    <img src={url} />
-  )
-  const getVideo = (url: string) => (
-    <video src={url} autoPlay controls playsInline loop muted/>
-  )
-
-  return (
-    <>
-      {
-        category === Category.image
-        ? getImage(url)
-        : getVideo(url)
-      }
-    </>
-  )
 };

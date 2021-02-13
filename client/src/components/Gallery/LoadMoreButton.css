@@ -1,0 +1,7 @@
+#LoadMoreButtonContainer {
+    margin-top: 25px;
+    justify-content: center;
+    display: flex;
+    position: fixed;
+    width: 100%;
+}
