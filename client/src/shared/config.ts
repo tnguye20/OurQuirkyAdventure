@@ -5,7 +5,7 @@ const ROUTES = {
  APP: '/app',
  ROOT: '/',
  EDIT_MEMORY: '/edit',
- GRID: '/gallery',
+ GALLERY: '/gallery',
  SLIDE: '/slide',
  UPLOAD: '/upload',
  USER_SETTINGS: '/settings',

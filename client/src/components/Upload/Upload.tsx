@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import {useDropzone} from 'react-dropzone';
 import { Backdrop, CircularProgress, Container } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import { ImagePreview } from './ImagePreview';
 import { DetailsModal } from './DetailsModal';
 import { ActionButtons } from './ActionButtons';

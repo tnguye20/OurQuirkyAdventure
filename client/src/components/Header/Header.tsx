@@ -103,7 +103,7 @@ export const Header = () => {
         </NavLink>
 
         <Divider />
-        <NavLink className={ classes.link } to={ ROUTES.GRID } activeClassName="navActive" onClick={ e => setOpen(false) } >
+        <NavLink className={ classes.link } to={ ROUTES.GALLERY } activeClassName="navActive" onClick={ e => setOpen(false) } >
           <ListItem button>
             <ListItemIcon><AppsIcon htmlColor={"white"}/></ListItemIcon>
             <ListItemText primary="Gallery" />

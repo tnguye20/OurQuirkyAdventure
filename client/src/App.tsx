@@ -21,7 +21,8 @@ import {
   Logout,
   Slides,
   Upload,
-  Header
+  Header,
+  Gallery
 } from './components';
 
 function App() {
@@ -41,6 +42,11 @@ function App() {
                   <Logout />
                 </AuthRoute>
 
+                <AuthContextWrapper path={ ROUTES.GALLERY }>
+                  <MemoryContextProvider>
+                    <Gallery />
+                  </MemoryContextProvider>
+                </AuthContextWrapper>
                 <AuthContextWrapper path={ ROUTES.ROOT }>
                   <MemoryContextProvider>
                     <Slides />

@@ -11,8 +11,6 @@ const useMemory = () => {
   useEffect(() => {
     const init = async () => {
       const data = await getMemoryByUser(authUser.idToken!, filterCriteria);
-      console.log(data);
-
       setMemories(data);
     };
 
