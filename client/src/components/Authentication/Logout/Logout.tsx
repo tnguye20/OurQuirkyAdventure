@@ -22,8 +22,7 @@ export const Logout = () => {
       setTimeout( () => {
         const emptyAuthToken = new AuthToken(null, null);
         setAuthUser!(emptyAuthToken);
-        localStorage.removeItem("idToken");
-        localStorage.removeItem("uid");
+        localStorage.clear();
 
         history.push(ROUTES.LOGIN);
       } , 1000 );

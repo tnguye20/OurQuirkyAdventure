@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { FilterCriteria, Memory } from '../interfaces';
+import { STATUS_CODES } from 'http';
+import { FilterCriteria, Memory, GetMemoryByUserParams } from '../interfaces';
 import { ROUTES } from './routes';
 
 interface APIResponse {
@@ -8,7 +9,8 @@ interface APIResponse {
   headers?: Record<string, any>
 }
 
-export const getMemoryByUser = async (idToken: string, filter?: FilterCriteria, limit?: number): Promise<Memory[]> => {
+export const getMemoryByUser = async (params: GetMemoryByUserParams): Promise<Memory[]> => {
+    const { idToken, filterCriteria, limit, startAt, startAfter } = params;
     try {
         const url = ROUTES.GET_MEMORY_BY_USER;
         const options = {
@@ -18,8 +20,10 @@ export const getMemoryByUser = async (idToken: string, filter?: FilterCriteria, 
         };
 
         const data: Record<string, any> = {};
-        if (filter) data.filter = filter;
+        if (filterCriteria) data.filter = filterCriteria;
         if (limit) data.limit = limit;
+        if (startAt) data.startAt = startAt;
+        if (startAfter) data.startAfter = startAfter;
 
         const rs = await axios.post(url, data, options);
 

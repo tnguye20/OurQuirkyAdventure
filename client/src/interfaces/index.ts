@@ -11,6 +11,15 @@ export interface FileInfo {
   edited: boolean,
   tags: Array<string>
 }
+export interface GetMemoryByUserParams {
+  idToken: string,
+  filterCriteria: FilterCriteria | null,
+  limit?: number,
+  startAt?: any,
+  startAfter?: any,
+  endAt?: any,
+  endBefore?: any,
+}
 
 export {
     User,

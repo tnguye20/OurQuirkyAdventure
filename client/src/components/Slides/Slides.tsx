@@ -146,7 +146,7 @@ export const Slides: React.FC = () => {
                         ? <NoSlide />
                         : 
                     memories
-                    .map((memory: Memory, index) => {
+                    .map((memory: Memory, index: number) => {
                         return (
                             <Carousel.Item key={index} id={`container_${index}`} className='slide_container'>
                                 <div className='slide_item' id={`item_${index}`} data-src={memory.url} data-type={memory.category}></div>

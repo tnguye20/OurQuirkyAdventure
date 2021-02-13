@@ -21,8 +21,9 @@ const getMemoryByUserController = async (req: Request) => {
           }
         });
   }
-  logger.info('Filter Criteria: ', filterCriteria);
-  const response = await getMemoryByUser(uid, filterCriteria, limit, startAfter);
+  const response = await getMemoryByUser({
+    uid, filterCriteria, limit, startAfter
+  });
 
   logger.info('<<<Exit getMemoryByUserController');
   return {

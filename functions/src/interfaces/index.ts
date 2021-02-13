@@ -13,7 +13,15 @@ export interface ImageMagickMetadata {
     'date:create': string | undefined
   }
 }
-
+export interface GetMemoryByUserParams {
+  uid: string,
+  filterCriteria: FilterCriteria | null,
+  limit?: number,
+  startAt?: any,
+  startAfter?: any,
+  endAt?: any,
+  endBefore?: any,
+}
 export {
     User,
     AuthToken,

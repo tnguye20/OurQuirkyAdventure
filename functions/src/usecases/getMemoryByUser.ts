@@ -1,5 +1,5 @@
 import { MemoryDao } from '../daos';
-import { FilterCriteria, Memory } from '../interfaces';
+import { FilterCriteria, Memory, GetMemoryByUserParams } from '../interfaces';
 import { logger } from 'firebase-functions';
 
 const CriteriaMapper = {
@@ -13,33 +13,41 @@ const CriteriaMapper = {
   toDate: 'toDate'
 }
 
-const getMemoryByUser = async (uid: string, filterCriteria: FilterCriteria | null, limit?: number, startAfter?: number) => {
+const getMemoryByUser = async (params: GetMemoryByUserParams) => {
   logger.info('>>>Enter getMemoryByUser');
+
+  const { uid, filterCriteria, limit, startAfter } = params;
+
   const memoryDao = new MemoryDao();
   memoryDao.setUser(uid);
   memoryDao.setOrderBy('takenDate');
 
   // Filter And Limit response
   // Since tags is a heavy lifter, we will use native firestore to filter it
- if (filterCriteria) {
-   const { tags, fromDate, toDate } = filterCriteria;
-    if (tags.length > 0 ) {
+  if (filterCriteria) {
+    const { tags, fromDate, toDate } = filterCriteria;
+    if (tags.length > 0) {
       logger.info(`Filter with tags: ${tags}`);
       memoryDao.setTagsFilter(tags);
     }
-   if (
-     fromDate !== null &&
-     toDate !== null
-   ) {
+    if (
+      fromDate !== null &&
+      toDate !== null
+    ) {
       logger.info(`Filter with date range ${fromDate.toString()} - ${toDate.toString()}`);
       memoryDao.setDateRange(fromDate, toDate);
     }
   }
 
   // Set Limit
-  if (limit) {
-    memoryDao.setLimit(limit);
+  if (startAfter) {
+    if (startAfter.id) {
+      const ref = new MemoryDao(startAfter.id);
+      const lastDoc = await ref.memoryRef!.get();
+      memoryDao.setStartAfter(lastDoc);
+    }
   }
+  if (limit) memoryDao.setLimit(limit);
 
   // Get The results
   let memories = await memoryDao.getAllMemories();

@@ -17,24 +17,51 @@ export default class MemoryDao {
     this.userRef = this.ref.where('user', '==', userID);
   }
 
-  setLimit(limit: number, lastRecord?: Memory) {
+  setLimit(limit: number) {
     if (this.userRef) {
       this.userRef = this.userRef.limit(limit);
-      if (lastRecord) this.userRef.startAfter({ ...lastRecord });
     }
     else {
       this.refQuery = this.refQuery.limit(limit);
-      if (lastRecord) this.refQuery.startAfter({ ...lastRecord });
+    }
+  }
+
+  setStartAt(m: any) {
+    if (this.userRef) {
+      this.userRef = this.userRef.startAt(m);
+    }
+    else {
+      this.refQuery = this.refQuery.startAt(m);
+    }
+  }
+  setStartAfter(m: any) {
+    if (this.userRef) {
+      this.userRef = this.userRef.startAfter(m);
+    }
+    else {
+      this.refQuery = this.refQuery.startAfter(m);
+    }
+  }
+  setEndBefore(m: any) {
+    if (this.userRef) {
+      this.userRef = this.userRef.endBefore(m);
+    }
+    else {
+      this.refQuery = this.refQuery.endBefore(m);
+    }
+  }
+  setEndAt(m: any) {
+    if (this.userRef) {
+      this.userRef = this.userRef.endAt(m);
+    }
+    else {
+      this.refQuery = this.refQuery.endAt(m);
     }
   }
 
   setDateRange(fromDate: Date, toDate: Date) {
-    if (this.userRef) {
-      this.userRef = this.userRef.startAfter(fromDate).endBefore(toDate);
-    }
-    else {
-      this.refQuery = this.refQuery.startAfter(fromDate).endBefore(toDate);
-    }
+    this.setEndAt(fromDate);
+    this.setEndAt(toDate);
   }
 
   setTagsFilter(tags: Array<string>) {

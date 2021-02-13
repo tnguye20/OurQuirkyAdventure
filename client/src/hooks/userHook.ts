@@ -17,10 +17,9 @@ const useUser = () => {
                 } as User;
                 setUser(data);
             });
-
             return () => unsubscribe();
         }
-    }, []);
+    }, [authUser]);
 
     return {
         user

@@ -10,7 +10,7 @@ const useMemory = (limit?: number) => {
   
   useEffect(() => {
     const init = async () => {
-      const data = await getMemoryByUser(authUser.idToken!, filterCriteria, limit);
+      const data = await getMemoryByUser({ idToken: authUser.idToken!, filterCriteria, limit });
       setMemories(data);
     };
 
@@ -18,7 +18,8 @@ const useMemory = (limit?: number) => {
   }, [filterCriteria, filterLoaded]);
 
   return {
-    memories
+    memories,
+    setMemories
   };
 };
 
