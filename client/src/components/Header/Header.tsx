@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useFilterValue, useUserValue } from '../../contexts';
 import {
   makeStyles,
@@ -75,6 +75,7 @@ export const Header = () => {
     saveFilterCriteria,
     isFilterEmpty
   } = useFilterValue()!;
+  const location = useLocation();
   const { user } = useUserValue();
   const [ open, setOpen ] = useState(false);
 
@@ -128,12 +129,12 @@ export const Header = () => {
         }
 
         <Divider/>
-        <NavLink className={ classes.link } to={ ROUTES.USER_SETTINGS } activeClassName="navActive" onClick={ e => setOpen(false) } >
+        {/* <NavLink className={ classes.link } to={ ROUTES.USER_SETTINGS } activeClassName="navActive" onClick={ e => setOpen(false) } >
           <ListItem button>
             <ListItemIcon><SettingsIcon htmlColor={"white"}/></ListItemIcon>
             <ListItemText primary="User Settings" />
           </ListItem>
-        </NavLink>
+        </NavLink> */}
 
         <Divider/>
         <NavLink className={ classes.link } to={ ROUTES.LOGOUT }>
@@ -152,7 +153,11 @@ export const Header = () => {
   return (
     <div id="header">
       <Button onClick={e => setOpen(true)}>
-        <MenuIcon htmlColor={"white"}/>
+        <MenuIcon htmlColor={
+            location.pathname === ROUTES.SLIDE || location.pathname === ROUTES.ROOT 
+            ? 'white'
+            : ''
+          }/>
       </Button>
       <Drawer open={open} onClose={ e => setOpen(false)} classes={{ paper: classes.paper }}>
         { MenuList() }

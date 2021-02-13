@@ -66,7 +66,7 @@ const getMemoryByUser = async (params: GetMemoryByUserParams) => {
   return memories;
 };
 
-const filterMemory = (memories: Memory[], filterCriteria: FilterCriteria): Memory[] {
+const filterMemory = (memories: Memory[], filterCriteria: FilterCriteria): Memory[] => {
   const included: Memory[] = memories.filter((memory: Memory) => {
     const included = Object.entries(filterCriteria)
       .filter((entry) => {

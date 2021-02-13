@@ -189,8 +189,8 @@ export const Upload: React.FC = () => {
   }
  
   return (
-    <Container>
-      <section className="container">
+    <Container id='uploadContainer'>
+      <section>
         <div {...getRootProps({ className: 'dropzone'})}>
           <input {...getInputProps()} />
           <p>Drag 'n' drop some files here, or click to select files</p>

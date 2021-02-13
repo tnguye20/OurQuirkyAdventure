@@ -11,12 +11,34 @@ import { getMemoryByUser } from '../../api';
 import { SizeMe } from 'react-sizeme';
 import { MemoryContainer } from './MemoryContainer';
 import { LoadMoreButton } from './LoadMoreButton';
+import { NoSlide } from '../NoSlide';
 
 export const Gallery: React.FC = () => {
   const { memories, setMemories } = useMemory(10);
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
   const [hasMore, setHasMore] = React.useState<boolean>(true);
+ 
+  const gridRef = React.useRef<{updateLayout: () => void}>();
+  const resetVideoSize = React.useCallback(() => {
+    if (gridRef.current) {
+      gridRef.current.updateLayout();
+    }
+  }, []);
+
+  React.useEffect(() => {
+    setHasMore(true);
+    if (gridRef.current) {
+      let videos = document.querySelectorAll('video');
+      if (videos) {
+        videos.forEach((el, index) => el.addEventListener('loadeddata', resetVideoSize));
+
+        return () => {
+          videos.forEach((el, index) => el.removeEventListener('loadeddata', resetVideoSize));
+        }
+      }
+    }
+  }, [memories]);
 
   const loadMore = async () => {
    const lastMemory = memories[memories.length - 1];
@@ -24,7 +46,7 @@ export const Gallery: React.FC = () => {
       const params: GetMemoryByUserParams = {
         idToken: authUser.idToken!,
         filterCriteria,
-        limit: 7,
+        limit: 10,
       }
       params.startAfter = { id: lastMemory.id };
       const data = await getMemoryByUser(params);
@@ -46,25 +68,32 @@ export const Gallery: React.FC = () => {
   return (
     <div id='galleryContainer'>
       <Container>
-        <SizeMe>
-          {
-            ({ size }) => (
-              <StackGrid
-                columnWidth={size ? (size.width! <= 375 ? '100%' : '33.33%') : '33.33%'}
-                itemComponent='div'
-                gutterHeight={9}
-                monitorImagesLoaded={true}
-              >
-              {
-                memories.length > 0
-                  ? memories.map((m) => <MemoryContainer memory={m}/>)
-                  : '' 
-              }
-              </StackGrid>
+        {
+          memories.length > 0
+            ? (
+              <>
+                <SizeMe>
+                  {
+                    ({ size }) => (
+                      <StackGrid
+                        columnWidth={size ? (size.width! <= 375 ? '100%' : '33.33%') : '33.33%'}
+                        itemComponent='div'
+                        gutterHeight={9}
+                        monitorImagesLoaded={true}
+                        gridRef={grid => gridRef.current = grid}
+                      >
+                      {
+                        memories.map((m) => <MemoryContainer memory={m}/>)
+                      }
+                      </StackGrid>
+                    )
+                  }
+                </SizeMe>
+                <LoadMoreButton hasMore={hasMore} loadMore={loadMore}/>
+              </>
             )
-          }
-        </SizeMe>
-        <LoadMoreButton hasMore={hasMore} loadMore={loadMore}/>
+            : <NoSlide dark={true}/> 
+        }
       </Container>
     </div>
    )

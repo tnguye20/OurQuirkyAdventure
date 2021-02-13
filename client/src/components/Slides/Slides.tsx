@@ -14,7 +14,6 @@ import {
 import { NoSlide } from '../NoSlide/';
 
 export const Slides: React.FC = () => {
-    // const elements = React.useRef<Element[]>([]);
     const [interval, setInterval] = React.useState<number>(5000);
     const { memories } = useMemoryValue();
 
@@ -23,6 +22,19 @@ export const Slides: React.FC = () => {
             setInterval(i);
         }
     };
+
+    const handleLoadedVideo = React.useCallback((event: Event) => {
+        const video = event.target! as HTMLVideoElement;
+        const duration = (video.duration) * 1000;
+        try {
+            video.pause();
+            video.currentTime = 0;
+            video.play();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }, []);
 
     const loadElement = (index: number, withInterval: boolean = false) => {
         const el = document.querySelector(`#item_${index}`) as HTMLElement;
@@ -40,21 +52,22 @@ export const Slides: React.FC = () => {
                     video.classList.add(`loaded_slide_${index}`);
                     video.setAttribute("muted", "");
                     video.setAttribute("playsinline", '');
-                    video.onloadedmetadata = () => {
-                        const duration = (video.duration) * 1000;
-                        try {
-                            video.pause();
-                            video.currentTime = 0;
-                            video.play();
-                            const duration = (video.duration) * 1000;
+                    video.addEventListener('loadedmetadata', handleLoadedVideo);
+                    // video.onloadedmetadata = () => {
+                    //     const duration = (video.duration) * 1000;
+                    //     try {
+                    //         video.pause();
+                    //         video.currentTime = 0;
+                    //         video.play();
+                    //         const duration = (video.duration) * 1000;
 
-                            if (withInterval) handleInterval(duration);
-                        }
-                        catch (error) {
-                            console.log(error);
-                            if (withInterval) handleInterval(5000);
-                        }
-                    }
+                    //         if (withInterval) handleInterval(duration);
+                    //     }
+                    //     catch (error) {
+                    //         console.log(error);
+                    //         if (withInterval) handleInterval(5000);
+                    //     }
+                    // }
 
                     const container = document.querySelector(`#container_${index}`)!;
                     container.appendChild(video);
@@ -91,6 +104,14 @@ export const Slides: React.FC = () => {
 
             loadIfNeeded(0);
             if (memories.length > 0) loadIfNeeded(1);
+        }
+
+        return () => {
+            console.log('unmounted');
+            const videos = document.querySelectorAll('video');
+            if (videos) {
+                videos.forEach(video => video.removeEventListener('loadedmetadata', handleLoadedVideo));
+            }
         }
     }, [memories]);
 

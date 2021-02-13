@@ -5,7 +5,6 @@ export const MemoryContainer: React.FC<any> = (prop) => {
   const {
     category,
     url,
-    title
   } = prop.memory as Memory;
   const c = category as string;
 
@@ -13,7 +12,7 @@ export const MemoryContainer: React.FC<any> = (prop) => {
     <img src={url} />
   )
   const getVideo = (url: string) => (
-    <video src={url} autoPlay controls playsInline loop muted/>
+    <video src={url} controls playsInline loop muted/>
   )
 
   return (

@@ -1,3 +1,7 @@
+#uploadContainer {
+    margin-top: 40px;
+}
+
 .dropzone {
   flex: 1;
   display: flex;

@@ -41,7 +41,7 @@ export const Filter: React.FC<{
     const [ defaultTakenMonths, setDefaultTakenMonths ] = useState<Array<string>>([]);
     const [ takenYears, setTakenYears ] = useState<Array<string>>([]);
     const [ defaultTakenYears, setDefaultTakenYears ] = useState<Array<string>>([]);
-    const [ category, setCategory ] = useState<string>();
+    const [ category, setCategory ] = useState<string>('all');
 
     useEffect(() => {
         const init = async () => {
