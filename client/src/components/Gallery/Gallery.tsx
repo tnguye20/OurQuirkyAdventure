@@ -5,6 +5,8 @@ import { useAuthValue, useFilterValue } from '../../contexts';
 import StackGrid from "react-stack-grid";
 import './Gallery.css'
 import Container from '@material-ui/core/Container';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import { getMemoryByUser } from '../../api';
@@ -12,12 +14,18 @@ import { SizeMe } from 'react-sizeme';
 import { MemoryContainer } from './MemoryContainer';
 import { LoadMoreButton } from './LoadMoreButton';
 import { NoSlide } from '../NoSlide';
+import { CircularProgress } from '@material-ui/core';
+
+const Alert: React.FC<AlertProps> = (props: AlertProps) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export const Gallery: React.FC = () => {
   const { memories, setMemories } = useMemory(10);
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
   const [hasMore, setHasMore] = React.useState<boolean>(true);
+  const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
  
   const gridRef = React.useRef<{updateLayout: () => void}>();
   const resetVideoSize = React.useCallback(() => {
@@ -60,6 +68,7 @@ export const Gallery: React.FC = () => {
   }
 
   const handleOnDocumentBottom = () => {
+    setOpenSnackbar(true);
     loadMore();
   };
 
@@ -83,7 +92,7 @@ export const Gallery: React.FC = () => {
                         gridRef={grid => gridRef.current = grid}
                       >
                       {
-                        memories.map((m) => <MemoryContainer memory={m}/>)
+                          memories.map((m) => <MemoryContainer key={m.id} memory={m}/>)
                       }
                       </StackGrid>
                     )
@@ -95,6 +104,10 @@ export const Gallery: React.FC = () => {
             : <NoSlide dark={true}/> 
         }
       </Container>
+
+      <Snackbar open={openSnackbar} autoHideDuration={1000} onClose={() => setOpenSnackbar(false)}>
+          <CircularProgress size='3rem'/>
+      </Snackbar>
     </div>
    )
 };
