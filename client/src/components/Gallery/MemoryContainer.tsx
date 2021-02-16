@@ -12,7 +12,7 @@ export const MemoryContainer: React.FC<any> = (prop) => {
     <img src={url} />
   )
   const getVideo = (url: string) => (
-    <video src={url} controls playsInline loop muted/>
+    <video src={url} autoPlay controls playsInline loop muted/>
   )
 
   return (

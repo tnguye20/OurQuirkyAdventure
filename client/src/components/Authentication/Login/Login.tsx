@@ -62,7 +62,7 @@ export const Login = () => {
           inputProps={{
             style: { height: '3px'}
           }}
-          id="outlined-basic" 
+          id="outlined-email-basic" 
           label="Email" 
           variant="outlined"
           InputProps={{
@@ -80,7 +80,7 @@ export const Login = () => {
           inputProps={{
             style: { height: '3px'}
           }}
-          id="outlined-basic" 
+          id="outlined-password-basic" 
           type="password" 
           label="Password" 
           variant="outlined"

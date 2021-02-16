@@ -15,7 +15,7 @@ const useMemory = (limit?: number) => {
     };
 
     if (filterLoaded) init();
-  }, [filterCriteria, filterLoaded]);
+  }, [filterCriteria, filterLoaded, authUser.idToken, limit]);
 
   return {
     memories,
