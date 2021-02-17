@@ -8,6 +8,7 @@ import {
 import { Upload } from './Upload';
 import { Header } from './Header';
 import { Gallery } from './Gallery';
+import { CustomizedAlert } from './CustomizedAlert';
 
 export {
     AuthRoute,
@@ -17,5 +18,6 @@ export {
     Slides,
     Upload,
     Header,
-    Gallery
+    Gallery,
+    CustomizedAlert
 };

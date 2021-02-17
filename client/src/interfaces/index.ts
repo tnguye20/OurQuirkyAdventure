@@ -21,11 +21,19 @@ export interface GetMemoryByUserParams {
   endBefore?: any,
 }
 
+enum ALERT_TYPE {
+  success = 'success', 
+  info = 'info', 
+  warning = 'warning', 
+  error = 'error', 
+}
+
 export {
     User,
     AuthToken,
     Memory,
     Category,
     UserCriteria,
-    FilterCriteria
+    FilterCriteria,
+    ALERT_TYPE
 };

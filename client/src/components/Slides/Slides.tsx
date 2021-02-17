@@ -107,7 +107,6 @@ export const Slides: React.FC = () => {
         }
 
         return () => {
-            console.log('unmounted');
             const videos = document.querySelectorAll('video');
             if (videos) {
                 videos.forEach(video => video.removeEventListener('loadedmetadata', handleLoadedVideo));

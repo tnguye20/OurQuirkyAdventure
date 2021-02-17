@@ -9,6 +9,7 @@ import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 // import GlassesIcon from '../../CustomIcons/GlassesIcon';
 // import GoogleIcon from '../../CustomIcons/GoogleIcon';
+import { CustomizedAlert } from '../../CustomizedAlert';
 
 import { useHistory } from 'react-router-dom';
 
@@ -18,6 +19,7 @@ import { useAuthValue } from '../../../contexts';
 
 import './Login.css';
 import { AuthToken } from '../../../interfaces';
+import { useAlert } from '../../../hooks';
 const useStyles = makeStyles((theme) => ({
   button: {
     margin: '10px',
@@ -29,25 +31,35 @@ const useStyles = makeStyles((theme) => ({
 export const Login = () => {
   const classes = useStyles();
   const { setAuthUser } = useAuthValue();
+  const { openAlert, setAlertMessage, setOpenAlert, alertMessage, alertType} = useAlert();
   const history = useHistory();
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
 
   const handleLogin = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const { user } = await auth.signInWithEmailAndPassword(email, password);
-    if (user) {
-      const idToken = await user.getIdToken();
-      localStorage.setItem("idToken", idToken);
-      localStorage.setItem("uid", user.uid);
-      const authToken = new AuthToken(user.uid, idToken);
+    try {
+      const { user } = await auth.signInWithEmailAndPassword(email, password);
+      if (user) {
+        const idToken = await user.getIdToken();
+        localStorage.setItem("idToken", idToken);
+        localStorage.setItem("uid", user.uid);
+        const authToken = new AuthToken(user.uid, idToken);
 
-      setAuthUser!(authToken);
-      history.push(ROUTES.ROOT);
+        setAuthUser!(authToken);
+        history.push(ROUTES.ROOT);
+      }
     }
-
+    catch (error) {
+      if (error.code) {
+        console.log(error.message);
+        setAlertMessage(error.message);
+      }
+      setOpenAlert(true);
+    }
   }
 
   return (
+    <>
     <div className="Login">
       <div className="Login-card ">
         {/* <GlassesIcon size='100px' /> */}
@@ -122,5 +134,7 @@ export const Login = () => {
       </div>
 
     </div>
+      <CustomizedAlert duration={5000} openAlert={openAlert} setOpenAlert={setOpenAlert} alertMessage={alertMessage} alertType={alertType}/>
+    </>
   );
 }
