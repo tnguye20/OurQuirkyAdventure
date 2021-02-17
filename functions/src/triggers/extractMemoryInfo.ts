@@ -97,7 +97,7 @@ const extractMemoryInfo = runWith(runTimeOpts).storage.object().onFinalize(async
           logger.info(updatedMetadata);
           
           const memoryDao = new MemoryDao();
-          await memoryDao.updateMemoryByFileName(filename, updatedMetadata);
+          await memoryDao.updateByFileName(filename, updatedMetadata);
           
           fs.unlinkSync(tempLocalFile);
         }

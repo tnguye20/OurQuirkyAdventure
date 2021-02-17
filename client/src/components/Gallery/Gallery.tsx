@@ -92,7 +92,7 @@ export const Gallery: React.FC = () => {
                         gridRef={grid => gridRef.current = grid}
                       >
                       {
-                          memories.map((m) => <MemoryContainer key={m.id} memory={m}/>)
+                          memories.map((m, index) => <MemoryContainer key={m.id} memory={m}/>)
                       }
                       </StackGrid>
                     )

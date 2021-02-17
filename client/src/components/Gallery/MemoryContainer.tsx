@@ -1,27 +1,41 @@
 import * as React from 'react';
 import { Category, Memory } from '../../interfaces';
+import EditMemory from './EditMemory';
 
-export const MemoryContainer: React.FC<any> = (prop) => {
+export const MemoryContainer: React.FC<{
+  memory: Memory
+}> = ({ memory }) => {
   const {
     category,
     url,
-  } = prop.memory as Memory;
-  const c = category as string;
+  } = memory;
+  const [openEdit, setOpenEdit] = React.useState<boolean>(false);
 
   const getImage = (url: string) => (
     <img src={url} />
   )
   const getVideo = (url: string) => (
-    <video src={url} autoPlay controls playsInline loop muted/>
+    <video src={url} autoPlay playsInline loop muted />
   )
+
+  const handleOnClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  }
 
   return (
     <>
-      {
-        category === Category.image
-        ? getImage(url)
-        : getVideo(url)
-      }
+      <span onClick={handleOnClick}>
+        {
+          category === Category.image
+          ? getImage(url)
+          : getVideo(url)
+        }
+      </span>
+      <EditMemory memory={memory} open={openEdit} handleClose={handleCloseEdit}/>
     </>
   )
 };

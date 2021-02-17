@@ -10,7 +10,11 @@ export default class MemoryDao {
   constructor(memoryID?: string) {
     this.ref = db.collection('memories');
     this.refQuery = this.ref;
-    if (memoryID) this.memoryRef = this.ref.doc(memoryID);
+    if (memoryID) this.setMemoryID(memoryID);
+  }
+  
+  setMemoryID(memoryID: string) {
+    this.memoryRef = this.ref.doc(memoryID);
   }
 
   setUser(userID: string) {
@@ -113,7 +117,7 @@ export default class MemoryDao {
   async addMemory(memory: Memory) {
     return await this.ref.add(memory);
   }
-  async updateMemory(fields: Record<string, any>) {
+  async update(fields: Record<string, any>) {
     return await this.memoryRef!.update({...fields});
   }
 
@@ -135,7 +139,7 @@ export default class MemoryDao {
     return null;
   }
 
-  async updateMemoryByFileName(filename: string, fields: Record<string, Record<string, any>>) {
+  async updateByFileName(filename: string, fields: Record<string, Record<string, any>>) {
     const memory = await this.getMemoryByFileName(filename);
     if (memory) {
       const _memoryRef = this.ref.doc(memory.id!);
@@ -143,6 +147,19 @@ export default class MemoryDao {
     }
     else {
       throw new Error(`Failed to update memory with filename ${filename}`)
+    }
+  }
+
+  async delete(memoryID?: string) {
+    if (memoryID) {
+      this.setMemoryID(memoryID)
+    }
+
+    if (this.memoryRef) {
+      this.memoryRef.delete();
+    }
+    else {
+      throw new Error(`Faild to delete. No memory specified.`)
     }
   }
 }

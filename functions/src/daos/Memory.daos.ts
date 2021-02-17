@@ -111,7 +111,7 @@ export default class MemoryDao {
   async addMemory(memory: Memory) {
     return await this.ref.add(memory);
   }
-  async updateMemory(fields: Record<string, any>) {
+  async update(fields: Record<string, any>) {
     return await this.memoryRef!.update({...fields});
   }
 
@@ -133,7 +133,7 @@ export default class MemoryDao {
     return null;
   }
 
-  async updateMemoryByFileName(filename: string, fields: Record<string, Record<string, any>>) {
+  async updateByFileName(filename: string, fields: Record<string, Record<string, any>>) {
     const memory = await this.getMemoryByFileName(filename);
     if (memory) {
       const _memoryRef = this.ref.doc(memory.id!);
