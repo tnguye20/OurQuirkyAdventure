@@ -4,7 +4,7 @@ import { UserCriteria } from '../interfaces';
 const userCriteriaGenerate = async (uid: string) => {
   const memoryDao = new MemoryDao();
   memoryDao.setUser(uid);
-  const memories = await memoryDao.getAllMemories();
+  const memories = await memoryDao.getAll();
 
   const userCriteriaDao = new UserCriteriaDao(uid);
   const userCriteria = new UserCriteria();

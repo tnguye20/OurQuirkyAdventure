@@ -1,6 +1,16 @@
 import { db } from '../libs';
-import { Memory } from '../interfaces';
-
+import { FilterCriteria, Memory } from '../interfaces';
+// import { getDateFromTimestamp } from '../utils';
+const CriteriaMapper = {
+  tags: 'tags',
+  cities: 'city',
+  states: 'state',
+  takenMonths: 'takenMonth',
+  takenYears: 'takenYear',
+  categories: 'category',
+  fromDate: 'fromDate',
+  toDate: 'toDate'
+}
 export default class MemoryDao {
   ref: firebase.firestore.CollectionReference;
   memoryRef: firebase.firestore.DocumentReference | null = null;
@@ -97,10 +107,32 @@ export default class MemoryDao {
       throw new Error('Invalid Memory');
   }
 
-  async getAllMemories(): Promise<Memory[]> {
+  async getAll(filterCriteria?: FilterCriteria): Promise<Memory[]> {
     const ref = this.userRef ? this.userRef : this.ref;
-    const memories = await ref.get();
+    let memories = await ref.get();
     const data: Memory[] = [];
+
+    if (filterCriteria) {
+      const criterias = Object.entries(filterCriteria);
+      for (const criteria of criterias) {
+        const [k, v] = criteria;
+        const filterKey = k as keyof FilterCriteria;
+        const filterValue = v as Array<string> | null;
+
+        if (Array.isArray(filterValue)) {
+          if (filterValue.length > 0) {
+            const field = CriteriaMapper[filterKey];
+            const query = memories.query.where(
+              field,
+              field !== 'tags' ? 'in' : 'array-contains-any',
+              filterValue
+            );
+
+            memories = await query.get();
+          }
+        }
+      }
+    }
 
     if (!memories.empty) {
       memories.forEach((m) => {
@@ -108,6 +140,8 @@ export default class MemoryDao {
           ...m.data()
         } as Memory;
         memory.id = m.id;
+        // memory.takenDate = getDateFromTimestamp(memory.takenDate);
+        // memory.uploadedDate = getDateFromTimestamp(memory.uploadedDate);
         data.push(memory);
       });
     }
@@ -121,7 +155,7 @@ export default class MemoryDao {
     return await this.memoryRef!.update({...fields});
   }
 
-  async getMemoryByFileName(filename: string): Promise<Memory | null> {
+  async getByFileName(filename: string): Promise<Memory | null> {
     const memories = await this.ref.where('name', '==', filename).get();
     if (!memories.empty) {
       if (memories.size === 1) {
@@ -140,7 +174,7 @@ export default class MemoryDao {
   }
 
   async updateByFileName(filename: string, fields: Record<string, Record<string, any>>) {
-    const memory = await this.getMemoryByFileName(filename);
+    const memory = await this.getByFileName(filename);
     if (memory) {
       const _memoryRef = this.ref.doc(memory.id!);
       await _memoryRef.update(fields)

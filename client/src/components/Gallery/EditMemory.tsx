@@ -18,14 +18,17 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
-  KeyboardTimePicker
+  KeyboardTimePicker,
+  DateTimePicker,
+  KeyboardDateTimePicker
 } from '@material-ui/pickers';
 import { MemoryDao, UserCriteriaDao } from '../../daos';
+import { getDateFromTimestamp } from '../../utils';
 
 const EditMemory: React.FC<{
   memory: Memory,
   open: boolean,
-  handleClose: () => void
+  handleClose: (action?: string) => void
 }> = ({ memory, open, handleClose }) => {
   const { user } = useUserValue();
   const memoryDao = new MemoryDao(memory.id!);
@@ -34,14 +37,15 @@ const EditMemory: React.FC<{
   const [ defaultTags, setDefaultTags ] = React.useState<Array<string>>([]);
   const [ title, setTitle ] = React.useState<string>(memory.title);
 
-  const [ city, setCity ] = React.useState<string>(memory.city ? memory.city : '');
-  const [ neighbourhood, setNeighbourhood ] = React.useState<string>(memory.neighbourhood ? memory.neighbourhood : '');
-  const [ state, setState ] = React.useState<string>(memory.state ? memory.state : '');
-  const [ country, setCountry ] = React.useState<string>(memory.country ? memory.country : '');
-  const [ zipcode, setZipcode ] = React.useState<string>(memory.zipcode ? memory.zipcode : '');
-  // const [ takenDate, setTakenDate ] = React.useState<string>(memory.takenDate ? memory.takenDate.toDate : '');
-  // const [ takenMonth, setTakenMonth ] = React.useState<Array<string>>([]);
-  // const [ takenYear, setTakenYear ] = React.useState<Array<string>>([]);
+  const [ city, setCity ] = React.useState<string | null>(memory.city ? memory.city : null);
+  const [ neighbourhood, setNeighbourhood ] = React.useState<string | null>(memory.neighbourhood ? memory.neighbourhood : null);
+  const [ streetName, setStreetName ] = React.useState<string | null>(memory.streetName ? memory.streetName : null);
+  const [ state, setState ] = React.useState<string | null>(memory.state ? memory.state : null);
+  const [ country, setCountry ] = React.useState<string | null>(memory.country ? memory.country : null);
+  const [ zipcode, setZipcode ] = React.useState<string | null>(memory.zipcode ? memory.zipcode : null);
+  const [ takenDate, setTakenDate ] = React.useState<Date>(getDateFromTimestamp(memory.takenDate));
+  const [takenMonth, setTakenMonth] = React.useState<string | null>(memory.takenMonth ? memory.takenMonth : null);
+  const [ takenYear, setTakenYear ] = React.useState<string | null>(memory.takenYear ? memory.takenYear : null);
 
   React.useEffect(() => {
       const init = async () => {
@@ -52,30 +56,39 @@ const EditMemory: React.FC<{
           }
       }
       init();
-  }, [user])
+  }, [user, open])
 
   const handleEdit = async () => {
-    await memoryDao.update({
+    const update: Record<string, any> = {
       tags,
       city,
       state,
+      streetName,
       neighbourhood,
       country,
-      zipcode
-    });
-    
-    handleClose();
+      zipcode,
+      takenDate
+    };
+    await memoryDao.update(update);
+
+    handleClose((getDateFromTimestamp(memory.takenDate).toDateString() === takenDate.toDateString()) ? '' : 'dateUpdate');
   }
 
   const handleDelete = async () => {
     await memoryDao.delete();
 
-    handleClose();
+    handleClose('delete');
   }
 
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      setTakenDate(date);
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Edit Memory</DialogTitle>
+    <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Edit Memory <i>{memory.name}</i></DialogTitle>
       <DialogContent>
         <DialogContentText>
           Feel free to be as descriptive as possible. Common informations have been listed below.
@@ -88,6 +101,14 @@ const EditMemory: React.FC<{
           label="Title"
           fullWidth
           value={title}
+        />
+        <TextField
+          onChange={e => setStreetName(e.target.value)}
+          margin="dense"
+          id="streetName"
+          label="Street Name"
+          fullWidth
+          value={streetName}
         />
         <TextField
           onChange={e => setNeighbourhood(e.target.value)}
@@ -130,40 +151,22 @@ const EditMemory: React.FC<{
           value={zipcode}
         />
 
-    {/* {
+    {
       takenDate !== null
       ? (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
-        fullWidth
-        margin="normal"
-        id="date-picker-dialog"
-        label="Date picker dialog"
-        format="MM/dd/yyyy"
-        value={takenDate}
-        onChange={date => setTakenDate(date)}
-        KeyboardButtonProps={{
-          'aria-label': 'change date',
-        }}
-        />
-        {
-          Object.keys(item).length === 1 ? (
-            <KeyboardTimePicker
-            fullWidth
-            margin="normal"
-            id="time-picker"
-            label="Time picker"
-            value={takenDate}
-            onChange={time => setTakenDate(time)}
-            KeyboardButtonProps={{
-              'aria-label': 'change time',
-            }}
-            />
-          ) : <></>
-        }
+        <KeyboardDateTimePicker
+          fullWidth
+          margin="normal"
+          id="date-time-picker-dialog"
+          label="Date Time picker dialog"
+          value={takenDate}
+          onChange={handleDateChange}
+          format="yyyy/MM/dd hh:mm a"
+          />
         </MuiPickersUtilsProvider>
       ) : ''
-    } */}
+    }
 
     <br />
     <br />

@@ -28,6 +28,20 @@ enum ALERT_TYPE {
   error = 'error', 
 }
 
+export type Action = {
+  type: 'delete',
+  index: number
+} | {
+  type: 'init',
+  memories: Memory[]
+} | {
+  type: 'dateUpdate'
+}
+
+export type State = {
+  memories: Memory[]
+};
+
 export {
     User,
     AuthToken,

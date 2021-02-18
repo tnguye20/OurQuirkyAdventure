@@ -52,7 +52,7 @@ const getMemoryByUser = async (params: GetMemoryByUserParams) => {
   }
 
   // Get The results
-  let memories = await memoryDao.getAllMemories();
+  let memories = await memoryDao.getAll();
   logger.info(`Length of memories after tags filter: ${memories.length}`);
 
   // Manual filter other criterias

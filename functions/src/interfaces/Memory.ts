@@ -1,4 +1,3 @@
-import firebase from 'firebase';
 import { IUser } from './User';
 
 export enum Category {
@@ -44,10 +43,10 @@ export interface IMemory {
     category: keyof typeof Category,
     extension: keyof typeof Extension,
     mimetype: keyof typeof Mimetype,
-    takenDate: firebase.firestore.Timestamp,
+    takenDate: Date,
     takenMonth?: string | null,
     takenYear?: string | null,
-    uploadedDate: firebase.firestore.Timestamp,
+    uploadedDate: Date,
     tags?: Array<string>,
     url?: string,
 }
@@ -73,8 +72,8 @@ export class Memory implements IMemory {
     category: keyof typeof Category;
     extension: keyof typeof Extension;
     mimetype: keyof typeof Mimetype;
-    takenDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
-    uploadedDate: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+    takenDate: Date = new Date();
+    uploadedDate: Date = this.takenDate;
     tags: string[] = [];
     takenMonth: string | null= null;
     takenYear:string | null= null;

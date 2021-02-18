@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { GetMemoryByUserParams } from '../../interfaces';
+import { Action, GetMemoryByUserParams, Memory, State } from '../../interfaces';
 import { useMemory } from '../../hooks';
 import { useAuthValue, useFilterValue } from '../../contexts';
 import StackGrid from "react-stack-grid";
 import './Gallery.css'
 import Container from '@material-ui/core/Container';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import { getMemoryByUser } from '../../api';
 import { SizeMe } from 'react-sizeme';
@@ -15,13 +13,34 @@ import { MemoryContainer } from './MemoryContainer';
 import { LoadMoreButton } from './LoadMoreButton';
 import { NoSlide } from '../NoSlide';
 import { CircularProgress } from '@material-ui/core';
+import { getDateFromTimestamp } from '../../utils';
 
-const Alert: React.FC<AlertProps> = (props: AlertProps) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'delete': {
+      const tmp = state.memories;
+      tmp.splice(action.index, 1);
+      return { memories: tmp };
+      // return { memories: tmp.sort((a, b) => b.takenDate.getTime() - a.takenDate.getTime())};
+    }
+    case 'init': {
+      state.memories = action.memories;
+      console.log(state.memories);
+      return { memories: action.memories};
+    }
+    case 'dateUpdate': {
+      const sorted = state.memories.sort((a, b) => getDateFromTimestamp(b.takenDate).getUTCDate() - getDateFromTimestamp(a.takenDate).getUTCDate());
+      console.log(sorted);
+      return { memories: sorted};
+      // return { memories: state.memories}
+    }
+    default: return state;
+  }
 }
 
 export const Gallery: React.FC = () => {
   const { memories, setMemories } = useMemory(10);
+  const [state, dispatch] = React.useReducer(reducer, { memories });
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
   const [hasMore, setHasMore] = React.useState<boolean>(true);
@@ -35,6 +54,7 @@ export const Gallery: React.FC = () => {
   }, []);
 
   React.useEffect(() => {
+    dispatch({ type: 'init', memories });
     setHasMore(true);
     if (gridRef.current) {
       let videos = document.querySelectorAll('video');
@@ -49,7 +69,7 @@ export const Gallery: React.FC = () => {
   }, [memories]);
 
   const loadMore = async () => {
-   const lastMemory = memories[memories.length - 1];
+   const lastMemory = state.memories[state.memories.length - 1];
     if (lastMemory && hasMore) {
       const params: GetMemoryByUserParams = {
         idToken: authUser.idToken!,
@@ -78,7 +98,7 @@ export const Gallery: React.FC = () => {
     <div id='galleryContainer'>
       <Container>
         {
-          memories.length > 0
+          state.memories.length > 0
             ? (
               <>
                 <SizeMe>
@@ -92,7 +112,7 @@ export const Gallery: React.FC = () => {
                         gridRef={grid => gridRef.current = grid}
                       >
                       {
-                          memories.map((m, index) => <MemoryContainer key={m.id} memory={m}/>)
+                          state.memories.map((m, index) => <MemoryContainer key={m.id} index={index} memory={m} dispatch={dispatch} />)
                       }
                       </StackGrid>
                     )

@@ -1,5 +1,6 @@
 import { Memory } from '../interfaces';
 import { db } from '../libs';
+// import { getDateFromTimestamp } from '../utils/getDateFromTimestamp.utils';
 
 export default class MemoryDao {
   ref: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
@@ -91,7 +92,7 @@ export default class MemoryDao {
       throw new Error('Invalid Memory');
   }
 
-  async getAllMemories(): Promise<Memory[]> {
+  async getAll(): Promise<Memory[]> {
     const ref = this.userRef ? this.userRef : this.ref;
     const memories = await ref.get();
     const data: Memory[] = [];
@@ -102,6 +103,8 @@ export default class MemoryDao {
           ...m.data()
         } as Memory;
         memory.id = m.id;
+        // memory.takenDate = getDateFromTimestamp(memory.takenDate);
+        // memory.uploadedDate = getDateFromTimestamp(memory.uploadedDate);
         data.push(memory);
       });
     }

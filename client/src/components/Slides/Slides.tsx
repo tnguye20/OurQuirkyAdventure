@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Slides.css';
 
 import {
+    useFilterValue,
     useMemoryValue
 } from '../../contexts';
 import {
@@ -15,6 +16,7 @@ import { NoSlide } from '../NoSlide/';
 
 export const Slides: React.FC = () => {
     const [interval, setInterval] = React.useState<number>(5000);
+    const { filterCriteria } = useFilterValue()!;
     const { memories } = useMemoryValue();
 
     const handleInterval = (i: number) => {
@@ -112,7 +114,7 @@ export const Slides: React.FC = () => {
                 videos.forEach(video => video.removeEventListener('loadedmetadata', handleLoadedVideo));
             }
         }
-    }, [memories]);
+    }, [memories, filterCriteria]);
 
     const handleOnSlide = (eventKey: number, direction: "left" | "right") => {
         const el = document.querySelector(`.loaded_slide_${eventKey}`) as HTMLElement;
@@ -158,7 +160,7 @@ export const Slides: React.FC = () => {
                 indicators={false}
                 interval={interval}
                 onSlide={handleOnSlide}
-                fade={true}
+                fade={false}
                 pause={false}
             >
                 {
@@ -168,12 +170,11 @@ export const Slides: React.FC = () => {
                     memories
                     .map((memory: Memory, index: number) => {
                         return (
-                            <Carousel.Item key={index} id={`container_${index}`} className='slide_container'>
+                            <Carousel.Item key={index} id={`container_${index}`} className='slidejk_container'>
                                 <div className='slide_item' id={`item_${index}`} data-src={memory.url} data-type={memory.category}></div>
                                 <Carousel.Caption className='slideCaption'>
                                     <p><b>{memory.title}</b></p>
-                                    {/* <p className='subtext'>{memory.takenDate.toDate().toUTCString()}</p> */}
-                                    <p className='subtext'>{getDateFromTimestamp(memory.takenDate)}</p>
+                                    <p className='subtext'>{getDateFromTimestamp(memory.takenDate).toUTCString()}</p>
                                     {
                                         memory.latitude ? (
                                             <p className='subtext'>

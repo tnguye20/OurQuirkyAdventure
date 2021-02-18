@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Category, Memory } from '../../interfaces';
+import { Action, Category, Memory } from '../../interfaces';
 import EditMemory from './EditMemory';
 
 export const MemoryContainer: React.FC<{
-  memory: Memory
-}> = ({ memory }) => {
+  memory: Memory,
+  index: number,
+  dispatch: React.Dispatch<Action>
+}> = ({ memory, dispatch, index }) => {
   const {
     category,
     url,
@@ -22,8 +24,15 @@ export const MemoryContainer: React.FC<{
     setOpenEdit(true);
   };
 
-  const handleCloseEdit = () => {
+  const handleCloseEdit = (action: string = '') => {
     setOpenEdit(false);
+
+    if (action === 'delete') {
+      dispatch({ type: action, index });
+    }
+    else if (action === 'dateUpdate') {
+      dispatch({ type: action });
+    }
   }
 
   return (
