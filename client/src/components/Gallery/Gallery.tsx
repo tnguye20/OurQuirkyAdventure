@@ -37,7 +37,7 @@ const reducer = (state: State, action: Action): State => {
 }
 
 export const Gallery: React.FC = () => {
-  const { memories, setMemories } = useMemory(10);
+  const { memories, setMemories } = useMemory(6);
   const [state, dispatch] = React.useReducer(reducer, { memories });
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
@@ -72,7 +72,7 @@ export const Gallery: React.FC = () => {
       const params: GetMemoryByUserParams = {
         idToken: authUser.idToken!,
         filterCriteria,
-        limit: 10,
+        limit: 6,
       }
       params.startAfter = { id: lastMemory.id };
       const data = await getMemoryByUser(params);
@@ -103,9 +103,10 @@ export const Gallery: React.FC = () => {
                   {
                     ({ size }) => (
                       <StackGrid
-                        columnWidth={size ? (size.width! <= 375 ? '100%' : '33.33%') : '33.33%'}
+                        columnWidth={size ? (size.width! <= 375 ? '100%' : '50%') : '50%'}
                         itemComponent='div'
                         gutterHeight={9}
+                        gutterWidth={9}
                         monitorImagesLoaded={true}
                         gridRef={grid => gridRef.current = grid}
                       >

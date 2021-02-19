@@ -1,6 +1,7 @@
 import { MemoryDao } from '../daos';
 import { FilterCriteria, Memory, GetMemoryByUserParams } from '../interfaces';
 import { logger } from 'firebase-functions';
+import { isFilterEmpty } from '../utils';
 
 const CriteriaMapper = {
   tags: 'tags',
@@ -47,7 +48,7 @@ const getMemoryByUser = async (params: GetMemoryByUserParams) => {
       memoryDao.setStartAfter(lastDoc);
     }
   }
-  if (limit && !filterCriteria) {
+  if (limit && isFilterEmpty(filterCriteria)) {
     memoryDao.setLimit(limit);
   }
 

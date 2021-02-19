@@ -68,8 +68,8 @@ const EditMemory: React.FC<{
       takenDate
     };
     if (takenDate) {
-      const takenMonth = takenDate.getUTCMonth() + 1;
-      const takenYear = takenDate.getUTCFullYear();
+      const takenMonth = (takenDate.getUTCMonth() + 1).toString();
+      const takenYear = (takenDate.getUTCFullYear()).toString();
       update.takenMonth = takenMonth;
       update.takenYear = takenYear;
     }
@@ -165,14 +165,15 @@ const EditMemory: React.FC<{
       takenDate !== undefined
       ? (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDateTimePicker
+        <KeyboardDatePicker
           fullWidth
           margin="normal"
           id="date-time-picker-dialog"
           label="Date Time picker dialog"
           value={takenDate}
           onChange={handleDateChange}
-          format="yyyy/MM/dd hh:mm a"
+          // format="yyyy/MM/dd hh:mm a"
+          format="yyyy/MM/dd"
           />
         </MuiPickersUtilsProvider>
       ) : ''
