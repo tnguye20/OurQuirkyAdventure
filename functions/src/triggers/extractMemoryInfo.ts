@@ -72,8 +72,8 @@ const extractMemoryInfo = runWith(runTimeOpts).storage.object().onFinalize(async
               : undefined;
           if (takenDate) {
             const d = new Date(takenDate.trim().replace(/(\d+):(\d+):(\d+) /, "$1/$2/$3 "));
-            const takenYear = `${d.getFullYear()}`;
-            const takenMonth = `${d.getMonth() + 1}`;
+            const takenYear = `${d.getUTCFullYear()}`;
+            const takenMonth = `${d.getUTCMonth() + 1}`;
             updatedMetadata = { takenDate: d, takenYear, takenMonth };
             logger.info(`takenDate for ${filename} is ${takenDate.toString()}`);
           }

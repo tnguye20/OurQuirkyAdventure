@@ -36,7 +36,6 @@ export const getMemoryByUser = async (params: GetMemoryByUserParams): Promise<Me
             const { errorMsg, message } = error.response.data;
             throw new Error(message ? message : errorMsg);
         }
-        console.log(error);
         throw new Error('Unexpected Error Happened. Please try again in a few minutes.');
     }
 }

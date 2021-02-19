@@ -25,14 +25,12 @@ const reducer = (state: State, action: Action): State => {
     }
     case 'init': {
       state.memories = action.memories;
-      console.log(state.memories);
       return { memories: action.memories};
     }
     case 'dateUpdate': {
       const sorted = state.memories.sort((a, b) => getDateFromTimestamp(b.takenDate).getUTCDate() - getDateFromTimestamp(a.takenDate).getUTCDate());
-      console.log(sorted);
+      console.log('sorted', sorted);
       return { memories: sorted};
-      // return { memories: state.memories}
     }
     default: return state;
   }

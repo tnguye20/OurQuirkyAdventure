@@ -12,13 +12,16 @@ const useMemory = (limit?: number) => {
   
   useEffect(() => {
     const init = async () => {
-      if (authUser.idToken) {
-        const data = await getMemoryByUser({ idToken: authUser.idToken, filterCriteria, limit });
+      try {
+        const data = await getMemoryByUser({ idToken: authUser.idToken!, filterCriteria, limit });
         setMemories(data);
+      }
+      catch (error) {
+        console.error(error);
       }
     };
 
-    if (filterLoaded) init();
+    if (filterLoaded && authUser.idToken) init();
     
     // const init = async () => {
     //   if (authUser.uid && filterLoaded) {
