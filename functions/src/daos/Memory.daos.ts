@@ -73,6 +73,14 @@ export default class MemoryDao {
       this.refQuery = this.ref.where('tags', 'array-contains-any', tags);
     }
   }
+  setOtherFilter(fields: string, values: Array<string>) {
+    if (this.userRef) {
+      this.userRef = this.userRef.where(fields, 'in', values);
+    }
+    else {
+      this.refQuery = this.ref.where(fields, 'in', values);
+    }
+  }
 
   setOrderBy(term: string, direction: 'asc' | 'desc' = 'asc') {
     this.userRef = this.userRef

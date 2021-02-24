@@ -98,10 +98,25 @@ const extractMemoryInfo = runWith(runTimeOpts).storage.object().onFinalize(async
           
           const memoryDao = new MemoryDao();
           await memoryDao.updateByFileName(filename, updatedMetadata);
-          
-          fs.unlinkSync(tempLocalFile);
         }
       }
+      else if (object.contentType.startsWith('video/')) {
+          logger.info(`${filename} is an video`)
+          let updatedMetadata = {};
+          const d = new Date();
+          const takenYear = `${d.getUTCFullYear()}`;
+          const takenMonth = `${d.getUTCMonth() + 1}`;
+          updatedMetadata = { takenDate: d, takenYear, takenMonth };
+
+          const memoryDao = new MemoryDao();
+          await memoryDao.updateByFileName(filename, updatedMetadata);
+          
+      }
+      else {
+        // TODO: Handle Edge Case
+      }
+
+      fs.unlinkSync(tempLocalFile);
     }
   }
   catch (error) {
