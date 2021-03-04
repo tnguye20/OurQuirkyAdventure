@@ -3,7 +3,8 @@ import { UnAuthRoute } from './UnAuthRoute';
 import { Slides } from './Slides';
 import { 
     Login,
-    Logout
+    Logout,
+    SignUp
 } from './Authentication';
 import { Upload } from './Upload';
 import { Header } from './Header';
@@ -19,5 +20,6 @@ export {
     Upload,
     Header,
     Gallery,
-    CustomizedAlert
+    CustomizedAlert,
+    SignUp
 };

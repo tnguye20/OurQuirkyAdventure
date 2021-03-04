@@ -19,6 +19,7 @@ import {
   UnAuthRoute,
   Login,
   Logout,
+  SignUp,
   Slides,
   Upload,
   Header,
@@ -32,6 +33,10 @@ function App() {
             <Switch>
                 <UnAuthRoute path={ ROUTES.LOGIN }>
                   <Login />
+                </UnAuthRoute>
+
+                <UnAuthRoute path={ ROUTES.SIGNUP }>
+                  <SignUp />
                 </UnAuthRoute>
 
                 <AuthContextWrapper path={ ROUTES.UPLOAD }>

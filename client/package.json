@@ -41,6 +41,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "deploy": "react-scripts build; cd ..; firebase deploy --only hosting; cd client/",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

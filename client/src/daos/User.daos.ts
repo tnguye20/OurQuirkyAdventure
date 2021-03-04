@@ -7,9 +7,19 @@ export default class UserDao {
 
     constructor(userID?: string) {
         this.ref = db.collection('users');
-        if(userID) this.userRef = this.ref.doc(userID);
+        if(userID) this.setUID(userID);
     }
-    
+
+    setUID(uid: string) {
+        this.userRef = this.ref.doc(uid);
+    }
+
+    async add(user: User) {
+        if (!this.userRef) this.setUID(user.id);
+
+        this.userRef!.set({ ...user });
+    }
+
     async getUser(): Promise<User> {
         const user = await this.userRef!.get();
         if (user.exists) {
@@ -28,11 +38,11 @@ export default class UserDao {
         });
     }
     
-    async addToCollections(newTags: Array<string>): Promise<User> {
-        const user = await this.getUser();
-        const totalTags = Array.from(new Set([...user!.collections, ...newTags]));
-        await this.updateUser('collections', totalTags); 
-        user.collections = totalTags;
-        return user;
-    }
+    // async addToCollections(newTags: Array<string>): Promise<User> {
+    //     const user = await this.getUser();
+    //     const totalTags = Array.from(new Set([...user!.collections, ...newTags]));
+    //     await this.updateUser('collections', totalTags); 
+    //     user.collections = totalTags;
+    //     return user;
+    // }
 }
