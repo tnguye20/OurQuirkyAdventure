@@ -46,6 +46,7 @@ export const Gallery: React.FC = () => {
  
   const gridRef = React.useRef<{updateLayout: () => void}>();
   const resetVideoSize = React.useCallback(() => {
+    console.log(gridRef.current);
     if (gridRef.current) {
       gridRef.current.updateLayout();
     }
@@ -108,7 +109,7 @@ export const Gallery: React.FC = () => {
                         gutterHeight={9}
                         gutterWidth={9}
                         monitorImagesLoaded={true}
-                        gridRef={grid => gridRef.current = grid}
+                        gridRef={grid => {gridRef.current = grid}}
                       >
                       {
                           state.memories.map((m, index) => <MemoryContainer key={m.id} index={index} memory={m} dispatch={dispatch} />)

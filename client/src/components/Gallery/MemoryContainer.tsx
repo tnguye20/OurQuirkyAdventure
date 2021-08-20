@@ -3,12 +3,9 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
 import * as React from 'react';
-import { Action, Category, Memory } from '../../interfaces';
+import { Action, Memory } from '../../interfaces';
 import EditMemory from './EditMemory';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { getDateFromTimestamp } from '../../utils';
 
@@ -21,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'black'
   },
 }));
+
+const nullString = (str: string | null, hasComma: boolean = false) => {
+  return str === null ? '' : (hasComma ? str + ', ' : str);
+}
 
 export const MemoryContainer: React.FC<{
   memory: Memory,
@@ -36,7 +37,8 @@ export const MemoryContainer: React.FC<{
     city,
     state,
     neighbourhood,
-    takenDate
+    streetName,
+    takenDate,
   } = memory;
   const [openEdit, setOpenEdit] = React.useState<boolean>(false);
 
@@ -90,11 +92,12 @@ export const MemoryContainer: React.FC<{
             }
             title={ title }
             subheader={
-              !city
-              ? state
-              : !neighbourhood
-              ? `${city}, ${state}`
-              : `${neighbourhood} ${city}, ${state}`
+              `
+                ${nullString(neighbourhood)} 
+                ${nullString(streetName, true)}
+                ${nullString(city, true)}
+                ${nullString(state)}
+              `
             }
           />
           <CardMedia
@@ -102,19 +105,13 @@ export const MemoryContainer: React.FC<{
             alt=""
             src={url}
             title=""
-            autoPlay
-            // controls
+            controls
+            // autoPlay
             playsInline
-            muted
+            // muted
             loop
           />
           <CardActions disableSpacing className={classes.header}>
-            {/* <IconButton aria-label="add to favorites">
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="comments">
-              <ChatBubbleIcon />
-            </IconButton> */}
             {getDateFromTimestamp(memory.takenDate).toDateString()}
           </CardActions>
         </Card>
