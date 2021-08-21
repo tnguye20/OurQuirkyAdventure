@@ -51,8 +51,8 @@ export const Filter: React.FC<{
                 setDefaultTags(data.tags);
                 setDefaultCities(data.cities);
                 setDefaultStates(data.states);
-                setDefaultTakenMonths(data.takenMonths);
-                setDefaultTakenYears(data.takenYears);
+                setDefaultTakenMonths(data.takenMonths.sort((a, b) => Number.parseInt(a) - Number.parseInt(b)));
+                setDefaultTakenYears(data.takenYears.sort((a, b) => Number.parseInt(a) - Number.parseInt(b)));
             }
         }
         init();

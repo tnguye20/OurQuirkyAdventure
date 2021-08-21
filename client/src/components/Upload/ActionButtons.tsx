@@ -3,10 +3,10 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import PhotoSizeSelectActualIcon from '@material-ui/icons/PhotoSizeSelectActual';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SelectAll from '@material-ui/icons/SelectAll';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,7 +30,8 @@ export const ActionButtons: React.FC<any> = ({
   canUpload,
   handleUpload,
   handleFileContent,
-  handleDelete
+  handleDelete,
+  handleSelectAll
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -49,6 +50,7 @@ export const ActionButtons: React.FC<any> = ({
   };
 
   const actions = [
+    { icon: <SelectAll />, name: 'Toggle All', cb: handleSelectAll, condition: true},
     { icon: <DeleteIcon />, name: 'Delete', cb: handleDelete, condition: true},
     { icon: <EditIcon />, name: 'Edit', cb: handleFileContent,  condition: true},
     { icon: <CloudUploadIcon />, name: 'Upload', cb: handleUpload, condition: canUpload },

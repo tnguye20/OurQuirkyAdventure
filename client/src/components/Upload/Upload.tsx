@@ -31,8 +31,8 @@ export const Upload: React.FC = () => {
     fileRejections
   } = useDropzone({
     accept: 'image/*, video/mp4, video/quicktime',
-    maxFiles: 20,
-    maxSize: 30000000,
+    // maxFiles: 20,
+    // maxSize: 30000000,
     disabled: isUploading,
     onDropAccepted: (acceptedFiles) => {
       setFilesInfo({});
@@ -68,7 +68,7 @@ export const Upload: React.FC = () => {
     </li>
   ));
 
-  React.useEffect(() => () => {
+  React.useEffect(() => {
     if (filesInfo) {
       Object.values(filesInfo).forEach((info) => URL.revokeObjectURL(info.src));
     }
@@ -128,13 +128,24 @@ export const Upload: React.FC = () => {
       const filenames = Object.keys(checkedFilesInfo)
       filenames.forEach((filename) => {
           URL.revokeObjectURL(tmpFilesInfo[filename].src);
+          URL.revokeObjectURL(filesInfo[filename].src);
           delete tmpFilesInfo[filename];
+          delete filesInfo[filename];
         });
       
       files.current = acceptedFiles.filter((file) => filenames.indexOf(file.name) === -1);
       setFilesInfo(tmpFilesInfo);
       removeCheckmarks();
     }
+  }
+
+  const handleSelectAll = () => {
+    const containers = document.querySelectorAll('div.fileContainer');
+    containers.forEach((el) => el.classList.toggle('checked'));
+
+    const tmpFilesInfo = { ...filesInfo };
+    Object.values(tmpFilesInfo).forEach((val) => val.checked = true);
+    setFilesInfo(tmpFilesInfo);
   }
 
   const handleUpload = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -147,7 +158,7 @@ export const Upload: React.FC = () => {
         const memoryDao = new MemoryDao();
         const promises = files.current.map(async (file) => {
           try {
-            const fileInfo = filesInfo[file.name];
+            const fileInfo: FileInfo = filesInfo[file.name];
             const { name, type, size } = file;
 
             const mimetype = type as keyof typeof Mimetype;
@@ -162,12 +173,15 @@ export const Upload: React.FC = () => {
             const uploadTaskSnapshot = await storage.child(fullPath).put(file);
             const url = await uploadTaskSnapshot.ref.getDownloadURL();
 
+            // Revoke Preview URL
+            URL.revokeObjectURL(fileInfo.src);
+
             const memory = new Memory(name, size, uid!, category, extension, mimetype);
-            memory.url = url;
             memory.name = newName;
+            memory.url = url;
             if (fileInfo.title !== '') memory.title = fileInfo.title;
             if (fileInfo.tags.length > 0) memory.tags = fileInfo.tags;
-            return memoryDao.addMemory({ ...memory });
+            return await memoryDao.addMemory({ ...memory });
           }
           catch (error) {
             console.log(error);
@@ -220,7 +234,13 @@ export const Upload: React.FC = () => {
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <ActionButtons handleFileContent={handleFileContent} handleDelete={handleDelete} handleUpload={handleUpload} canUpload={acceptedFiles.length > 0}/>
+      <ActionButtons 
+        handleSelectAll={handleSelectAll}
+        handleFileContent={handleFileContent}
+        handleDelete={handleDelete}
+        handleUpload={handleUpload}
+        canUpload={acceptedFiles.length > 0}
+      />
     </Container>
   );
 }
