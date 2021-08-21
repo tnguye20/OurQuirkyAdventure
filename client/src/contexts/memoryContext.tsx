@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Memory } from '../interfaces';
 import { useMemory } from '../hooks';
+require('dotenv').config();
 
 const { createContext, useContext } = React;
 

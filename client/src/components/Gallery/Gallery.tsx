@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Action, GetMemoryByUserParams, Memory, State } from '../../interfaces';
+import { ActionButton, GetMemoryByUserParams, State, Action } from '../../interfaces';
 import { useMemory } from '../../hooks';
 import { useAuthValue, useFilterValue } from '../../contexts';
 import StackGrid from "react-stack-grid";
@@ -14,36 +14,54 @@ import { LoadMoreButton } from './LoadMoreButton';
 import { NoSlide } from '../NoSlide';
 import { CircularProgress } from '@material-ui/core';
 import { getDateFromTimestamp } from '../../utils';
+import { ActionButtons } from '../ActionButtons';
+
+import EditIcon from '@material-ui/icons/Edit';
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'delete': {
       const tmp = state.memories;
       tmp.splice(action.index, 1);
-      return { memories: tmp };
+      return { ...state, memories: tmp};
       // return { memories: tmp.sort((a, b) => b.takenDate.getTime() - a.takenDate.getTime())};
     }
     case 'init': {
-      state.memories = action.memories;
-      return { memories: action.memories};
+      return { ...state,  memories: action.memories };
     }
     case 'dateUpdate': {
       const sorted = state.memories.sort((a, b) => getDateFromTimestamp(b.takenDate).getUTCDate() - getDateFromTimestamp(a.takenDate).getUTCDate());
       console.log('sorted', sorted);
-      return { memories: sorted};
+      return { ...state, memories: sorted};
+    }
+    case 'check': {
+      console.log({ ...state, checked_memories: {
+        ...state.checked_memories,
+        [action.memory.id!] : action.memory
+      } });
+      return { ...state, checked_memories: {
+        ...state.checked_memories,
+        [action.memory.id!] : action.memory
+      } }
+    }
+    case 'uncheck': {
+      const tmp = { ...state.checked_memories };
+      delete tmp[action.memory.id!]
+      console.log({ ...state, checked_memories: tmp });
+      return { ...state, checked_memories: tmp };
     }
     default: return state;
   }
 }
 
 export const Gallery: React.FC = () => {
-  const { memories, setMemories } = useMemory(6);
-  const [state, dispatch] = React.useReducer(reducer, { memories });
+  const { memories, setMemories } = useMemory(2);
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
   const [hasMore, setHasMore] = React.useState<boolean>(true);
   const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
- 
+  const [state, dispatch] = React.useReducer(reducer, { memories, checked_memories: {} });
+
   const gridRef = React.useRef<{updateLayout: () => void}>();
   const resetVideoSize = React.useCallback(() => {
     console.log(gridRef.current);
@@ -93,6 +111,15 @@ export const Gallery: React.FC = () => {
 
   useBottomScrollListener(handleOnDocumentBottom);
 
+  const actions: Array<ActionButton> = [
+    { 
+      icon: <EditIcon />,
+      name: 'Edit',
+      cb: () => {},
+      condition: true
+    }
+  ]
+
   return (
     <div id='galleryContainer'>
       <Container>
@@ -112,7 +139,12 @@ export const Gallery: React.FC = () => {
                         gridRef={grid => {gridRef.current = grid}}
                       >
                       {
-                          state.memories.map((m, index) => <MemoryContainer key={m.id} index={index} memory={m} dispatch={dispatch} />)
+                          state.memories.map((m, index) => <MemoryContainer 
+                            key={m.id} 
+                            index={index}
+                            memory={m} 
+                            dispatch={dispatch}
+                          />)
                       }
                       </StackGrid>
                     )
@@ -128,6 +160,12 @@ export const Gallery: React.FC = () => {
       <Snackbar open={openSnackbar} autoHideDuration={1000} onClose={() => setOpenSnackbar(false)}>
           <CircularProgress size='3rem'/>
       </Snackbar>
+
+
+      <ActionButtons 
+        label="Gallery Edit"
+        actions={actions}
+      />
     </div>
    )
 };

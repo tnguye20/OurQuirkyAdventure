@@ -2,9 +2,14 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import {useDropzone} from 'react-dropzone';
 import { Backdrop, CircularProgress, Container } from '@material-ui/core';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import SelectAll from '@material-ui/icons/SelectAll';
+
 import { ImagePreview } from './ImagePreview';
 import { DetailsModal } from './DetailsModal';
-import { ActionButtons } from './ActionButtons';
+import { ActionButtons } from '../ActionButtons';
 
 import './Upload.css';
 
@@ -107,7 +112,7 @@ export const Upload: React.FC = () => {
       }, {} as Record<string, FileInfo>);
   }
 
-  const handleFileContent = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleFileContent = async (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (filesInfo) {
       if (Object.keys(getCheckedFilesInfo(filesInfo)).length > 0) {
         setShowEditModal(true);
@@ -121,7 +126,7 @@ export const Upload: React.FC = () => {
    *  Remove entries from filesInfo
    *  Remove entries from acceptedFiles
    */
-  const handleDelete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleDelete = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (filesInfo) {
       const checkedFilesInfo = getCheckedFilesInfo(filesInfo);
       const tmpFilesInfo = { ...filesInfo };
@@ -148,7 +153,7 @@ export const Upload: React.FC = () => {
     setFilesInfo(tmpFilesInfo);
   }
 
-  const handleUpload = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleUpload = async (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
     setIsUploading(true);
     const now = Date.now();
@@ -201,6 +206,13 @@ export const Upload: React.FC = () => {
       }
     }
   }
+
+  const actions = [
+    { icon: <SelectAll />, name: 'Toggle All', cb: handleSelectAll, condition: true},
+    { icon: <DeleteIcon />, name: 'Delete', cb: handleDelete, condition: true},
+    { icon: <EditIcon />, name: 'Edit', cb: handleFileContent,  condition: true},
+    { icon: <CloudUploadIcon />, name: 'Upload', cb: handleUpload, condition: acceptedFiles.length > 0 },
+  ];
  
   return (
     <Container id='uploadContainer'>
@@ -235,11 +247,8 @@ export const Upload: React.FC = () => {
       </Backdrop>
 
       <ActionButtons 
-        handleSelectAll={handleSelectAll}
-        handleFileContent={handleFileContent}
-        handleDelete={handleDelete}
-        handleUpload={handleUpload}
-        canUpload={acceptedFiles.length > 0}
+        actions={actions}
+        label="Upload Action Buttons"
       />
     </Container>
   );

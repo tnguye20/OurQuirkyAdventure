@@ -8,6 +8,9 @@ import { Action, Memory } from '../../interfaces';
 import EditMemory from './EditMemory';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { getDateFromTimestamp } from '../../utils';
+import { CheckMark } from '../Upload/CheckMark';
+
+import '../Upload/ImagePreview.css';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -50,7 +53,17 @@ export const MemoryContainer: React.FC<{
   )
 
   const handleOnClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    setOpenEdit(true);
+    // setOpenEdit(true);
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.classList.toggle('checked');
+    console.log(event.currentTarget.classList);
+    if (!event.currentTarget.classList.contains('checked')) {
+      dispatch({type: 'uncheck', memory})
+    }
+    else {
+      dispatch({type: 'check', memory})
+    }
   };
 
   const handleCloseEdit = (action: string = '') => {
@@ -66,23 +79,9 @@ export const MemoryContainer: React.FC<{
 
   return (
     <>
-      <span onClick={handleOnClick}>
-        {/* <p>{title}</p>
-        <p>
-          {
-            !city
-            ? state
-            : !neighbourhood
-            ? `${city}, ${state}`
-            : `${neighbourhood} ${city}, ${state}`
-          }
-        </p>
-        {
-          category === Category.image
-          ? getImage(url)
-          : getVideo(url)
-        } */}
-        <Card>
+      <span className="fileHolder">
+        <Card className='fileContainer' onClick={handleOnClick}>
+          {/* <CheckMark /> */}
           <CardHeader
             className={classes.header}
             avatar={
