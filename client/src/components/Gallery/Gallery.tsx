@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActionButton, GetMemoryByUserParams, State, Action } from '../../interfaces';
+import { ActionButton, GetMemoryByUserParams, State, Action, Memory } from '../../interfaces';
 import { useMemory } from '../../hooks';
 import { useAuthValue, useFilterValue } from '../../contexts';
 import StackGrid from "react-stack-grid";
@@ -12,33 +12,46 @@ import { SizeMe } from 'react-sizeme';
 import { MemoryContainer } from './MemoryContainer';
 import { LoadMoreButton } from './LoadMoreButton';
 import { NoSlide } from '../NoSlide';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Dialog } from '@material-ui/core';
 import { getDateFromTimestamp } from '../../utils';
 import { ActionButtons } from '../ActionButtons';
 
 import EditIcon from '@material-ui/icons/Edit';
+import SelectAll from '@material-ui/icons/SelectAll';
+import EditMemory from './EditMemory';
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'delete': {
-      const tmp = state.memories;
-      tmp.splice(action.index, 1);
-      return { ...state, memories: tmp};
-      // return { memories: tmp.sort((a, b) => b.takenDate.getTime() - a.takenDate.getTime())};
+      const tmp: Array<Memory> = [];
+      state.memories.forEach((m) => {
+        if (action.ids.indexOf(m.id!) === -1) tmp.push(m)
+      });
+
+      return {...state, checked_memories: {}, memories: tmp, editOpen: false}
+    }
+    case 'edit_done': {
+      console.log(action.updated_content);
+      const tmp = [...state.memories];
+      for (let i = 0; i < tmp.length; i++) {
+        if (state.checked_memories[tmp[i].id!] !== undefined) {
+          tmp[i] = {...tmp[i], ...action.updated_content};
+        }
+      }
+      const checked = document.querySelectorAll('.memoryContainer.checked');
+      checked.forEach((el) => el.classList.remove('checked'));
+
+      return {...state, checked_memories: {}, memories: tmp, editOpen: false}
     }
     case 'init': {
-      return { ...state,  memories: action.memories };
+      return { ...state,  memories: action.memories,  };
     }
     case 'dateUpdate': {
       const sorted = state.memories.sort((a, b) => getDateFromTimestamp(b.takenDate).getUTCDate() - getDateFromTimestamp(a.takenDate).getUTCDate());
-      console.log('sorted', sorted);
+      // console.log('sorted', sorted);
       return { ...state, memories: sorted};
     }
     case 'check': {
-      console.log({ ...state, checked_memories: {
-        ...state.checked_memories,
-        [action.memory.id!] : action.memory
-      } });
       return { ...state, checked_memories: {
         ...state.checked_memories,
         [action.memory.id!] : action.memory
@@ -47,24 +60,37 @@ const reducer = (state: State, action: Action): State => {
     case 'uncheck': {
       const tmp = { ...state.checked_memories };
       delete tmp[action.memory.id!]
-      console.log({ ...state, checked_memories: tmp });
       return { ...state, checked_memories: tmp };
+    }
+    case 'check_all': {
+      const obj = {};
+      state.memories.forEach((m) => obj[m.id!] = m);
+
+      return { ...state, checked_memories: obj }
+    }
+    case 'uncheck_all': {
+      return { ...state, checked_memories: {} };
+    }
+    case 'edit': {
+      return {...state, editOpen: true };
+    }
+    case 'edit_close': {
+      return {...state, editOpen: false };
     }
     default: return state;
   }
 }
 
 export const Gallery: React.FC = () => {
-  const { memories, setMemories } = useMemory(2);
+  const { memories, setMemories } = useMemory(6);
   const { authUser } = useAuthValue();
   const { filterCriteria } = useFilterValue()!;
   const [hasMore, setHasMore] = React.useState<boolean>(true);
   const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
-  const [state, dispatch] = React.useReducer(reducer, { memories, checked_memories: {} });
+  const [state, dispatch] = React.useReducer(reducer, { memories, checked_memories: {}, editOpen: false });
 
   const gridRef = React.useRef<{updateLayout: () => void}>();
   const resetVideoSize = React.useCallback(() => {
-    console.log(gridRef.current);
     if (gridRef.current) {
       gridRef.current.updateLayout();
     }
@@ -111,11 +137,41 @@ export const Gallery: React.FC = () => {
 
   useBottomScrollListener(handleOnDocumentBottom);
 
+  const handleEdit = () => {
+    dispatch({type: 'edit'});
+  }
+  
+  const handleSelectAll = () => {
+    const containers = document.querySelectorAll('.memoryContainer');
+    const not_checked = document.querySelectorAll('.memoryContainer:not(.checked)');
+
+    if (not_checked.length === containers.length && not_checked.length > 0) {
+      containers.forEach((el) => el.classList.add('checked'));
+      dispatch({type: 'check_all'});
+    }
+    else if (not_checked.length === 0) {
+      containers.forEach((el) => el.classList.remove('checked'));
+      dispatch({type: 'uncheck_all'});
+    }
+    else {
+      const checked = document.querySelectorAll('.memoryContainer.checked');
+      checked.forEach((el) => el.classList.remove('checked'));
+      containers.forEach((el) => el.classList.add('checked'));
+      dispatch({type: 'check_all'});
+    }
+  }
+
   const actions: Array<ActionButton> = [
     { 
       icon: <EditIcon />,
       name: 'Edit',
-      cb: () => {},
+      cb: handleEdit,
+      condition: Object.values(state.checked_memories).length > 0
+    },
+    { 
+      icon: <SelectAll />,
+      name: 'Toggle All',
+      cb: handleSelectAll,
       condition: true
     }
   ]
@@ -166,6 +222,13 @@ export const Gallery: React.FC = () => {
         label="Gallery Edit"
         actions={actions}
       />
+
+      {
+        state.memories.length > 0
+        ? (
+          <EditMemory memories={Object.values(state.checked_memories)} open={state.editOpen} handleClose={() => dispatch({type: 'edit_close'})} dispatch={dispatch}/>
+        ) : ''
+      }
     </div>
    )
 };

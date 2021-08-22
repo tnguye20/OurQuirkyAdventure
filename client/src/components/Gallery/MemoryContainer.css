@@ -1,0 +1,23 @@
+.memoryContainer.checked, .memoryContainer.checked span, .memoryContainer.checked div {
+    background-color: teal !important;
+}
+
+.memoryContainer, .memoryContainer span, .memoryContainer div {
+    background-color: black !important;
+    color: white;
+}
+
+.memoryHolder {
+    transition: rm 0.135s cubic-bezier(0, 0, 0.2, 1) 0.2s, opacity 0.15s linear 0s;
+}
+.memoryContainer {
+    transition: rm 0.135s cubic-bezier(0, 0, 0.2, 1) 0.2s, opacity 0.15s linear 0s;
+}
+
+.memoryContainer.checked {
+    transform: translateZ(0px) scale3d(0.89228, 0.91922, 1);
+}
+
+.memoryContainer button.edited {
+    border: 2px solid maroon;
+}

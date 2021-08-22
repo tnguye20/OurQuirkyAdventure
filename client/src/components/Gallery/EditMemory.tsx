@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Category, Memory } from '../../interfaces';
+import { Action, Memory } from '../../interfaces';
 import {
   Dialog,
   DialogTitle,
@@ -18,32 +18,56 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
-  KeyboardTimePicker,
-  DateTimePicker,
-  KeyboardDateTimePicker
+  // KeyboardTimePicker,
+  // DateTimePicker,
+  // KeyboardDateTimePicker
 } from '@material-ui/pickers';
 import { MemoryDao, UserCriteriaDao } from '../../daos';
-import { getDateFromTimestamp } from '../../utils';
+import { ArrayIsEqual, getDateFromTimestamp } from '../../utils';
+
+const compareDates = (t1: Date, t2: Date): boolean => {
+  let d1 = getDateFromTimestamp(t1);
+  let d2 = getDateFromTimestamp(t2);
+
+  return d1.getUTCDay() === d2.getUTCDay() && d1.getUTCMonth() === d1.getUTCMonth() && d1.getUTCFullYear() === d2.getUTCFullYear();
+}
 
 const EditMemory: React.FC<{
-  memory: Memory,
+  memories: Array<Memory>,
   open: boolean,
-  handleClose: (action?: string) => void
-}> = ({ memory, open, handleClose }) => {
+  handleClose: (action?: string) => void,
+  dispatch: React.Dispatch<Action>
+}> = ({ open, memories, handleClose, dispatch }) => {
   const { user } = useUserValue();
-  const memoryDao = new MemoryDao(memory.id!);
 
-  const [ tags, setTags ] = React.useState<Array<string>>(memory.tags);
+  const [ tags, setTags ] = React.useState<Array<string>>([]);
   const [ defaultTags, setDefaultTags ] = React.useState<Array<string>>([]);
-  const [ title, setTitle ] = React.useState<string>(memory.title);
+  const [ title, setTitle ] = React.useState<string>('');
 
-  const [ city, setCity ] = React.useState<string | undefined>(memory.city ? memory.city : undefined);
-  const [ neighbourhood, setNeighbourhood ] = React.useState<string | undefined>(memory.neighbourhood ? memory.neighbourhood : undefined);
-  const [ streetName, setStreetName ] = React.useState<string | undefined>(memory.streetName ? memory.streetName : undefined);
-  const [ state, setState ] = React.useState<string | undefined>(memory.state ? memory.state : undefined);
-  const [ country, setCountry ] = React.useState<string | undefined>(memory.country ? memory.country : undefined);
-  const [ zipcode, setZipcode ] = React.useState<string | undefined>(memory.zipcode ? memory.zipcode : undefined);
-  const [ takenDate, setTakenDate ] = React.useState<Date>(getDateFromTimestamp(memory.takenDate));
+  const [ city, setCity ] = React.useState<string | undefined>('');
+  const [ neighbourhood, setNeighbourhood ] = React.useState<string | undefined>('');
+  const [ streetName, setStreetName ] = React.useState<string | undefined>('');
+  const [ state, setState ] = React.useState<string | undefined>('');
+  const [ country, setCountry ] = React.useState<string | undefined>('');
+  const [ zipcode, setZipcode ] = React.useState<string | undefined>('');
+  const [ takenDate, setTakenDate ] = React.useState<Date | undefined>((undefined));
+
+  const reduceMemories = (ms: Array<Memory>): Memory => {
+    return ms.reduce((acc: Memory, curr: Memory): Memory => {
+      const tmp = { ...acc };
+      tmp.title = acc.title === curr.title ? acc.title : '';
+      tmp.city = acc.city === curr.city ? acc.city : '';
+      tmp.neighbourhood = acc.neighbourhood === curr.neighbourhood ? acc.neighbourhood : '';
+      tmp.streetName = acc.streetName === curr.streetName ? acc.streetName : '';
+      tmp.state = acc.state === curr.state ? acc.state : '';
+      tmp.zipcode = acc.zipcode === curr.zipcode ? acc.zipcode : '';
+      tmp.country = acc.country === curr.country ? acc.country : '';
+      tmp.tags = ArrayIsEqual(acc.tags, curr.tags) ? acc.tags : [];
+      tmp.takenDate = compareDates(acc.takenDate, curr.takenDate) ? acc.takenDate : new Date();
+
+      return tmp;
+    });
+  }
 
   React.useEffect(() => {
       const init = async () => {
@@ -52,12 +76,36 @@ const EditMemory: React.FC<{
               const data = await userCriteriaDao.getUserCriteriaByUserID();
               setDefaultTags(data.tags);
           }
+          if (memories.length > 0) {
+            const rm = reduceMemories(memories);
+            setTitle(rm.title!);
+            setCity(rm.city!);
+            setNeighbourhood(rm.neighbourhood!);
+            setStreetName(rm.streetName!);
+            setState(rm.state!);
+            setCountry(rm.country!);
+            setZipcode(rm.zipcode!);
+            setTags(rm.tags!);
+            setTakenDate(getDateFromTimestamp(rm.takenDate!));
+          }
       }
       init();
+
+      return () => {
+        setTitle('');
+        setCity('');
+        setNeighbourhood('');
+        setStreetName('');
+        setState('');
+        setCountry('');
+        setZipcode('');
+        setTags([]);
+      }
   }, [user, open])
 
   const handleEdit = async () => {
     const update: Record<string, any> = {
+      title,
       tags,
       city,
       state,
@@ -79,15 +127,25 @@ const EditMemory: React.FC<{
       }
     });
 
-    await memoryDao.update(update);
+    for (let i = 0; i < memories.length; i++) {
+      const memory = memories[i];
+      const dao = new MemoryDao(memory.id!);
+      await dao.update(update);
+    }
 
-    handleClose((getDateFromTimestamp(memory.takenDate).toDateString() === takenDate.toDateString()) ? '' : 'dateUpdate');
+    dispatch({type: 'edit_done', updated_content: update});
   }
 
   const handleDelete = async () => {
-    await memoryDao.delete();
+    const ids: Array<string> = [];
+    for (let i = 0; i < memories.length; i++) {
+      const memory = memories[i];
+      ids.push(memory.id!);
+      const dao = new MemoryDao(memory.id!);
+      await dao.delete();
+    }
 
-    handleClose('delete');
+    dispatch({type: 'delete', ids});
   }
 
   const handleDateChange = (date: Date | null) => {
@@ -98,7 +156,7 @@ const EditMemory: React.FC<{
 
   return (
     <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Edit Memory <i>{memory.name}</i></DialogTitle>
+      <DialogTitle id="form-dialog-title">Edit Memory</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Feel free to be as descriptive as possible. Common informations have been listed below.

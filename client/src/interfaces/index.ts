@@ -47,7 +47,7 @@ export {
 
 export type Action = {
   type: 'delete',
-  index: number
+  ids: Array<string>
 } | {
   type: 'init',
   memories: Memory[]
@@ -59,9 +59,26 @@ export type Action = {
 } | {
   type: 'uncheck',
   memory: Memory
+} | {
+  type: 'edit'
+} | {
+  type: 'check_all'
+} | {
+  type: 'uncheck_all'
+} | {
+  type: 'edit_close'
+} | {
+  type: 'edit_done',
+  updated_content: Record<string, any>
 }
 
 export type State = {
   memories: Memory[],
-  checked_memories: { [id: string]: Memory }
+  checked_memories: { [id: string]: Memory },
+  editOpen: boolean
 };
+
+export interface FirebaseTimestamp {
+  _seconds: number,
+  _nanoseconds: number
+}

@@ -5,25 +5,12 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import * as React from 'react';
 import { Action, Memory } from '../../interfaces';
-import EditMemory from './EditMemory';
-import makeStyles from '@material-ui/core/styles/makeStyles';
 import { getDateFromTimestamp } from '../../utils';
-import { CheckMark } from '../Upload/CheckMark';
 
-import '../Upload/ImagePreview.css';
-
-const useStyles = makeStyles((theme) => ({
-  header: {
-    backgroundColor: 'black',
-    color: 'white'
-  },
-  avatar: {
-    backgroundColor: 'black'
-  },
-}));
+import './MemoryContainer.css';
 
 const nullString = (str: string | null, hasComma: boolean = false) => {
-  return str === null ? '' : (hasComma ? str + ', ' : str);
+  return  str === null? '' : (hasComma ? str + ', ' : str);
 }
 
 export const MemoryContainer: React.FC<{
@@ -31,8 +18,6 @@ export const MemoryContainer: React.FC<{
   index: number,
   dispatch: React.Dispatch<Action>
 }> = ({ memory, dispatch, index }) => {
-  const classes = useStyles();
-
   const {
     category,
     url,
@@ -43,7 +28,7 @@ export const MemoryContainer: React.FC<{
     streetName,
     takenDate,
   } = memory;
-  const [openEdit, setOpenEdit] = React.useState<boolean>(false);
+  const [edit, setEdit] = React.useState<boolean>(false);
 
   const getImage = (url: string) => (
     <img src={url} />
@@ -53,39 +38,37 @@ export const MemoryContainer: React.FC<{
   )
 
   const handleOnClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    // setOpenEdit(true);
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.classList.toggle('checked');
-    console.log(event.currentTarget.classList);
     if (!event.currentTarget.classList.contains('checked')) {
       dispatch({type: 'uncheck', memory})
+      setEdit(false);
     }
     else {
       dispatch({type: 'check', memory})
+      setEdit(true);
     }
   };
 
-  const handleCloseEdit = (action: string = '') => {
-    setOpenEdit(false);
+  // const handleCloseEdit = (action: string = '') => {
+  //   setOpenEdit(false);
 
-    if (action === 'delete') {
-      dispatch({ type: action, index });
-    }
-    else if (action === 'dateUpdate') {
-      dispatch({ type: action });
-    }
-  }
+  //   if (action === 'delete') {
+  //     dispatch({ type: action, index });
+  //   }
+  //   else if (action === 'dateUpdate') {
+  //     dispatch({ type: action });
+  //   }
+  // }
 
   return (
     <>
-      <span className="fileHolder">
-        <Card className='fileContainer' onClick={handleOnClick}>
-          {/* <CheckMark /> */}
+      <span className="memoryHolder">
+        <Card className='memoryContainer' onClick={handleOnClick}>
           <CardHeader
-            className={classes.header}
             avatar={
-              <Avatar aria-label="recipe" className={classes.avatar}>
+              <Avatar aria-label="recipe" >
                 💕
               </Avatar>
             }
@@ -110,13 +93,13 @@ export const MemoryContainer: React.FC<{
             // muted
             loop
           />
-          <CardActions disableSpacing className={classes.header}>
+          <CardActions disableSpacing >
             {getDateFromTimestamp(memory.takenDate).toDateString()}
           </CardActions>
         </Card>
 
       </span>
-      <EditMemory memory={memory} open={openEdit} handleClose={handleCloseEdit}/>
+      {/* <EditMemory memory={memory} open={openEdit} handleClose={handleCloseEdit}/> */}
     </>
   )
 };

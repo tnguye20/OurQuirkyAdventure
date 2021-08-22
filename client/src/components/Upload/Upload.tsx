@@ -145,12 +145,27 @@ export const Upload: React.FC = () => {
   }
 
   const handleSelectAll = () => {
-    const containers = document.querySelectorAll('div.fileContainer');
-    containers.forEach((el) => el.classList.toggle('checked'));
-
+    const containers = document.querySelectorAll('.fileContainer');
+    const not_checked = document.querySelectorAll('.fileContainer:not(.checked)');
     const tmpFilesInfo = { ...filesInfo };
-    Object.values(tmpFilesInfo).forEach((val) => val.checked = true);
-    setFilesInfo(tmpFilesInfo);
+
+    if (not_checked.length === containers.length && not_checked.length > 0) {
+      containers.forEach((el) => el.classList.add('checked'));
+      Object.values(tmpFilesInfo).forEach((val) => val.checked = true);
+      setFilesInfo(tmpFilesInfo);
+    }
+    else if (not_checked.length === 0) {
+      containers.forEach((el) => el.classList.remove('checked'));
+      Object.values(tmpFilesInfo).forEach((val) => val.checked = false);
+      setFilesInfo(tmpFilesInfo);
+    }
+    else {
+      const checked = document.querySelectorAll('.fileContainer.checked');
+      checked.forEach((el) => el.classList.remove('checked'));
+      containers.forEach((el) => el.classList.add('checked'));
+      Object.values(tmpFilesInfo).forEach((val) => val.checked = true);
+      setFilesInfo(tmpFilesInfo);
+    }
   }
 
   const handleUpload = async (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
